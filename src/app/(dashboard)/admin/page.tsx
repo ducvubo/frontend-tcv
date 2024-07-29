@@ -1,8 +1,6 @@
 import React from 'react'
-import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable'
-import { Mail } from './mail'
-import { accounts, mails } from './data'
 import { cookies } from 'next/headers'
+import { SideBar } from './SideBar'
 
 export default function Admin() {
   const layout = cookies().get('react-resizable-panels:layout:mail')
@@ -12,13 +10,7 @@ export default function Admin() {
   const defaultCollapsed = collapsed ? JSON.parse(collapsed.value) : undefined
   return (
     <section>
-      <Mail
-        accounts={accounts}
-        mails={mails}
-        defaultLayout={defaultLayout}
-        defaultCollapsed={defaultCollapsed}
-        navCollapsedSize={4}
-      />
+      <SideBar defaultLayout={defaultLayout} defaultCollapsed={defaultCollapsed} navCollapsedSize={4} />
     </section>
   )
 }
