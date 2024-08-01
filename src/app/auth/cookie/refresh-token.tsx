@@ -103,13 +103,13 @@ export default function RefreshToken() {
       fetchDataSSO()
       const interval = setInterval(() => {
         fetchData() // Gọi lại API mỗi phút
-      }, 1000 * 60 * 14)
+      }, 1000 * 60 * 10)
       return () => clearInterval(interval)
     } else {
       fetchData()
       const interval = setInterval(() => {
         fetchData() // Gọi lại API mỗi phút
-      }, 1000 * 60 * 14)
+      }, 1000 * 60 * 10)
       return () => clearInterval(interval)
     }
   }, [])

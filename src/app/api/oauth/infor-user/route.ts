@@ -31,7 +31,7 @@ export async function POST(request: Request) {
       })
       const data = await res.json()
       if (data.statusCode === 200) {
-        return new Response(JSON.stringify({ data: data.data, statusCodes: 200 }), {
+        return new Response(JSON.stringify({ data: data.metaData, statusCodes: 200 }), {
           status: 200
         })
       }

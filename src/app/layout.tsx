@@ -4,10 +4,8 @@ import './globals.css'
 import { StoreProvider } from './StoreProvider'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
-// import SaveInforUser from './auth/cookie/saveInforUser'
 import RefreshToken from './auth/cookie/refresh-token'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import Oauth from './auth/page'
+import { Toaster } from '@/components/ui/sonner'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
@@ -26,6 +24,7 @@ export default function RootLayout({
         <body className={inter.className}>
           <ToastContainer />
           {/* <Oauth /> */}
+          <Toaster />
           <RefreshToken />
           {/* <ScrollArea className='h-full w-full rounded-md border'>{children}</ScrollArea> */}
           {children}

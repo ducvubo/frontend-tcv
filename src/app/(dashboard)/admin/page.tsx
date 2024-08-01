@@ -10,7 +10,7 @@ export default function Admin() {
   const defaultCollapsed = collapsed ? JSON.parse(collapsed.value) : undefined
   return (
     <section>
-      <SideBar defaultLayout={defaultLayout} defaultCollapsed={defaultCollapsed} navCollapsedSize={4} />
+      {/* <SideBar defaultLayout={defaultLayout} defaultCollapsed={defaultCollapsed} navCollapsedSize={4} /> */}
     </section>
   )
 }
