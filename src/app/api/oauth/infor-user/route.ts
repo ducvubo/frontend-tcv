@@ -18,8 +18,10 @@ export async function POST(request: Request) {
   }
   if (access_token && refresh_token) {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BACKEND}/users/infor-user`, {
+      const res = await fetch(`${process.env.API_BACKEND}/users/infor-user`, {
         headers: {
+          key: process.env.API_KEY_BACKEND as string,
+          secret: process.env.API_SECRET_BACKEND as string,
           Authorization: `Bearer ${access_token}`,
           'x-rf-tk': refresh_token,
           'Content-Type': 'application/json',

@@ -8,7 +8,11 @@ const nextConfig = {
         hostname: 'localhost',
         port: '3000'
         // pathname: '/photos/**'
-      }
+      },
+      {
+        protocol: "https",
+        hostname: "**",
+      },
     ]
   },
   logging: {

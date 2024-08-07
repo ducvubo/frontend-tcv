@@ -14,13 +14,11 @@ export default function TopSearch() {
           </div>
           <div className='mx-4 mb-2 flex flex-col justify-center'>
             {tags.map((tag, index) => (
-              <>
-                <div key={index} className='text-sm my-[5px] font-medium'>
-                  Việc làm theo {tag}
-                </div>
+              <div key={index}>
+                <div className='text-sm my-[5px] font-medium'>Việc làm theo {tag}</div>
                 <div className='border'></div>
                 <Separator className='my-2' />
-              </>
+              </div>
             ))}
           </div>
         </ScrollArea>
@@ -30,13 +28,11 @@ export default function TopSearch() {
           </div>
           <div className='mx-4 mb-2 flex flex-col justify-center'>
             {tags.map((tag, index) => (
-              <>
-                <div key={index} className='text-sm my-[5px] font-medium'>
-                  Việc làm theo {tag}
-                </div>
+              <div key={index}>
+                <div className='text-sm my-[5px] font-medium'>Việc làm theo {tag}</div>
                 <div className='border'></div>
                 <Separator className='my-2' />
-              </>
+              </div>
             ))}
           </div>
         </ScrollArea>
@@ -46,13 +42,11 @@ export default function TopSearch() {
           </div>
           <div className='mx-4 mb-2 flex flex-col justify-center'>
             {tags.map((tag, index) => (
-              <>
-                <div key={index} className='text-sm my-[5px] font-medium'>
-                  Việc làm theo {tag}
-                </div>
+              <div key={index}>
+                <div className='text-sm my-[5px] font-medium'>Việc làm theo {tag}</div>
                 <div className='border'></div>
                 <Separator className='my-2' />
-              </>
+              </div>
             ))}
           </div>
         </ScrollArea>

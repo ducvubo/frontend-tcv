@@ -12,14 +12,14 @@ export const conTenSideBar: {
     label: '128',
     icon: Inbox,
     variant: 'ghost',
-    link: 'company'
+    link: '/admin/company'
   },
   {
     title: 'Drafts',
     label: '9',
     icon: File,
     variant: 'ghost',
-    link: 'user'
+    link: '/admin/user'
   },
   {
     title: 'Sent',

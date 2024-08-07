@@ -1,5 +1,3 @@
-'use client'
-
 import Link from 'next/link'
 import { LucideIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -8,6 +6,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { usePathname, useRouter } from 'next/navigation'
 import { useSelector } from 'react-redux'
 import { RootState } from '@/app/store'
+import { cookies } from 'next/headers'
 export interface NavProps {
   isCollapsed: boolean
   link: {
@@ -17,11 +16,12 @@ export interface NavProps {
     variant: 'default' | 'ghost' | 'link' | 'topcv' | 'destructive' | 'outline' | 'secondary' | null | undefined
     link?: string
   }[]
+  pathname?: string
 }
 
-export function Nav({ link, isCollapsed }: NavProps) {
-  const pathname = usePathname().split('/').pop()
- 
+export function Nav({ link, isCollapsed, pathname }: NavProps) {
+  // const pathname = usePathname().split('/').pop()
+  
   const links = link.map((item) => {
     if (item.link === pathname) {
       return {
@@ -49,7 +49,8 @@ export function Nav({ link, isCollapsed }: NavProps) {
             <Tooltip key={index} delayDuration={0}>
               <TooltipTrigger asChild>
                 <Link
-                  href={link.link || '#'}
+                  // href={link.link || '#'}
+                  href={link.link ? `${process.env.NEXT_PUBLIC_HOST_FRONTEND}${link.link}` : '#'}
                   className={cn(
                     buttonVariants({ variant: link.variant, size: 'icon' }),
                     'h-9 w-9',
@@ -69,7 +70,7 @@ export function Nav({ link, isCollapsed }: NavProps) {
           ) : (
             <Link
               key={index}
-              href={link.link || '#'}
+              href={link.link ? `${process.env.NEXT_PUBLIC_HOST_FRONTEND}${link.link}` : '#'}
               className={cn(
                 buttonVariants({ variant: link.variant, size: 'sm' }),
                 link.variant === 'default' && 'dark:bg-muted dark:text-white dark:hover:bg-muted dark:hover:text-white',

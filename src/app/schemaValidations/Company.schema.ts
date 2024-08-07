@@ -23,7 +23,7 @@ export const CompanyBody = z
       .string({ message: 'Mô tả công ty có dạng chuỗi' })
       .min(10, { message: 'Mô tả công ty tối thiểu 10 kí tự' })
       .max(10000, { message: 'Mô ta công ty tối đa 10000 kí tự' }),
-    company_website: z.string({ message: 'Website có dạng chuỗi' }),
+    company_website: z.string({ message: 'Website có dạng chuỗi' }).optional(),
     company_address: z.array(
       z.object({
         value: z
@@ -36,7 +36,8 @@ export const CompanyBody = z
       .string({ message: 'Mã số thuế có dạng số' })
       .min(6, { message: 'Mã số thuế có tối thiểu 6 số' })
       .max(10, { message: 'Mã số thuế có tối đa 10 số' })
-      .regex(/^\d+$/, { message: 'Mã số thuế có dạng số' }),
+      .regex(/^\d+$/, { message: 'Mã số thuế có dạng số' })
+      .optional(),
     company_business_field: z
       .string({ message: 'Lĩnh vực kinh doanh có dạng chuỗi' })
       .min(5, { message: 'Lĩnh vực kinh doanh có tối thiểu 5 kí tự' })
@@ -45,7 +46,7 @@ export const CompanyBody = z
       .string({ message: 'Tổng số công nhân viên có dạng chuỗi' })
       .min(10, { message: 'Tổng số nhân viên có tối thiểu 10 kí tự' })
       .max(100, { message: 'Tông số nhân viên có tối đa 100 kí tự' }),
-    company_recruitment_status: z.string({ message: 'Trạng thái tuyển dụng có dạng chuỗi' })
+    company_recruitment_status: z.string({ message: 'Trạng thái tuyển dụng có dạng chuỗi' }).optional()
   })
   .strict()
 
@@ -58,6 +59,16 @@ export const AddCompanyRes = z.object({
   }),
   tacgia: z.string()
 })
+
+export const taskSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  status: z.string(),
+  label: z.string(),
+  priority: z.string()
+})
+
+export type Task = z.infer<typeof taskSchema>
 
 export type AddCompanyBodyType = z.TypeOf<typeof CompanyBody>
 export type AddCompanyResType = z.TypeOf<typeof AddCompanyRes>

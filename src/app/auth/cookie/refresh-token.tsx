@@ -1,9 +1,8 @@
 'use client'
-import { genSignEndPoint } from '@/app/utils'
+import { genSignEndPoint, hashPayLoad } from '@/app/utils'
 import { redirect, useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
-
 import { toast } from 'react-toastify'
 import { inforUserState, startApp } from './inforUser.slice'
 export default function RefreshToken() {
@@ -46,10 +45,13 @@ export default function RefreshToken() {
           }
         })
         const userData = await userResponse.json()
-
         if (userData.statusCodes === 200) {
           runApp(userData.data)
+        } else {
+          router.push('/')
         }
+      } else {
+        router.push('/')
       }
     } catch (err) {
       console.log(err)
@@ -57,7 +59,7 @@ export default function RefreshToken() {
   }
 
   const fetchDataSSO = async () => {
-    const { sign, stime, version, nonce } = genSignEndPoint()
+    const { sign, stime, version, nonce, dataHash } = hashPayLoad({ access_token, refresh_token })
     fetch('http://localhost:3000/api/oauth', {
       method: 'POST',
       headers: {
@@ -67,7 +69,7 @@ export default function RefreshToken() {
         sign,
         version
       },
-      body: JSON.stringify({ access_token, refresh_token })
+      body: JSON.stringify(dataHash)
     })
       .then((r) => r.json())
       .then((data) => {

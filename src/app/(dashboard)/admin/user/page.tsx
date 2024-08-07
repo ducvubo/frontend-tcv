@@ -1,6 +1,4 @@
 import { Metadata } from 'next'
-import { task } from '../data'
-import { ResizableHandle, ResizablePanel } from '@/components/ui/resizable'
 import { DataTableDemo } from './DataTable'
 
 export const metadata: Metadata = {
@@ -8,20 +6,10 @@ export const metadata: Metadata = {
   description: 'A task and issue tracker build using Tanstack Table.'
 }
 
-export default async function TaskPage() {
-  const tasks = task
-  const defaultLayout = [20, 32, 48]
+export default async function UserPage() {
+  // const defaultLayout = [20, 32, 48]
   return (
     <>
-      {/* <ResizablePanel defaultSize={defaultLayout[1]} className='p-4'>
-        <div>
-          <span className='font-bold text-2xl text-black pt-20'>Quản lý nguời dùng</span>
-        </div>
-        <DataTableDemo />
-      </ResizablePanel>
-      <ResizableHandle withHandle />
-      <ResizablePanel defaultSize={defaultLayout[2]}></ResizablePanel>
-      <ResizableHandle withHandle /> */}
       <div>
         <span className='font-bold text-2xl text-[#00b14f] pt-20'>Quản lý công ty</span>
       </div>

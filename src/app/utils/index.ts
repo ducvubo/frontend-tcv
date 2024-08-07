@@ -1,6 +1,7 @@
 import { sign } from 'crypto'
 import md5 from 'md5'
 import { redirect } from 'next/navigation'
+import { AES } from 'crypto-js'
 
 const getRandomNonce = (num: number) => {
   return Math.floor((Math.random() + Math.floor(Math.random() * 9 + 1)) * Math.pow(10, num - 1))
@@ -35,5 +36,19 @@ export function genSignEndPoint() {
     version: versionToken,
     nonce: nonce,
     stime: stime.toString()
+  }
+}
+
+export function hashPayLoad<T>(payload: T) {
+  const { sign, stime, version, nonce } = genSignEndPoint()
+  const dataHash = AES.encrypt(JSON.stringify(payload), `${sign}${nonce}${keyToken}`).toString()
+  return {
+    sign,
+    version,
+    nonce,
+    stime,
+    dataHash: {
+      data: dataHash
+    }
   }
 }
