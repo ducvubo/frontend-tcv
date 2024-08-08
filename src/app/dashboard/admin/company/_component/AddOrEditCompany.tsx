@@ -120,7 +120,7 @@ export function FormAddCompany({ inforCompany, id }: any) {
         toast('Tải ảnh lên thành công', {
           action: {
             label: 'Tắt',
-            onClick: () => console.log('Undo')
+            onClick: () => null
           }
         })
 
@@ -167,52 +167,7 @@ export function FormAddCompany({ inforCompany, id }: any) {
     }
   }
 
-  // useEffect(() => {
-  //   const uploadAvatar = async () => {
-  //     console.log('object')
-  //     const formData_avatar = new FormData()
-  //     formData_avatar.append('file', file_avatar as Blob)
-  //     try {
-  //       await uploadImage(formData_avatar, 'avatar')
-  //     } catch (error) {
-  //       console.error('Failed to upload image:', error)
-  //     }
-  //   }
-  //   const uploadBanner = async () => {
-  //     const formData_banner = new FormData()
-  //     formData_banner.append('file', file_baner as Blob)
-  //     try {
-  //       await uploadImage(formData_banner, 'banner')
-  //     } catch (error) {
-  //       console.error('Failed to upload image:', error)
-  //     }
-  //   }
-  //   if (file_avatar && file_avatar !== previousFileAvatarRef.current) {
-  //     previousFileAvatarRef.current = file_avatar
-  //     uploadAvatar()
-  //   }
-  //   if (file_baner && file_baner !== previousFileBannerRef.current) {
-  //     previousFileBannerRef.current = file_baner
-  //     uploadBanner()
-  //   }
-  //   if (!file_avatar && file_avatar !== previousFileAvatarRef.current) {
-  //     setAvatar({
-  //       image_url_cloud: '',
-  //       image_url_local: '',
-  //       image_url_custom: ''
-  //     })
-  //   }
-  //   if (!file_baner && file_baner !== previousFileBannerRef.current) {
-  //     setBanner({
-  //       image_url_cloud: '',
-  //       image_url_local: '',
-  //       image_url_custom: ''
-  //     })
-  //   }
-  // }, [file_avatar, file_baner])
-
   useEffect(() => {
-    console.log('file_avatar useEffect triggered', file_avatar)
     const uploadAvatar = async () => {
       const formData_avatar = new FormData()
       formData_avatar.append('file', file_avatar as Blob)
@@ -232,12 +187,10 @@ export function FormAddCompany({ inforCompany, id }: any) {
       }
     }
     if (file_avatar && file_avatar !== previousFileAvatarRef.current) {
-      console.log('Uploading avatar', file_avatar)
       previousFileAvatarRef.current = file_avatar
       uploadAvatar()
     }
     if (file_baner && file_baner !== previousFileBannerRef.current) {
-      console.log('Uploading banner', file_baner)
       previousFileBannerRef.current = file_baner
       uploadBanner()
     }
@@ -281,7 +234,6 @@ export function FormAddCompany({ inforCompany, id }: any) {
       company_avatar: avatar,
       company_banner: banner
     }
-    // console.log('values form', payload)
     try {
       const company_address_map = payload.company_address.map((item: any) => item.value)
       payload.company_address = company_address_map
@@ -306,7 +258,7 @@ export function FormAddCompany({ inforCompany, id }: any) {
           toast('Thêm công ty thành công', {
             action: {
               label: 'Tắt',
-              onClick: () => console.log('Undo')
+              onClick: () => null
             }
           })
           router.push('/admin/company')
@@ -341,7 +293,7 @@ export function FormAddCompany({ inforCompany, id }: any) {
           toast('Cập nhật công ty thành công', {
             action: {
               label: 'Tắt',
-              onClick: () => console.log('Undo')
+              onClick: () => null
             }
           })
           router.push('/admin/company')
@@ -363,10 +315,6 @@ export function FormAddCompany({ inforCompany, id }: any) {
       toast.error('Đã có lỗi xảy ra vui lòng thử lại')
     }
   }
-
-  console.log('file_avatar', file_avatar)
-  console.log('file_banner', file_baner)
-
   return (
     <ScrollArea>
       <Form {...form}>
@@ -691,7 +639,7 @@ export function FormAddCompany({ inforCompany, id }: any) {
           />
 
           <Button type='submit' className='!mt-8 w-full' variant='topcv'>
-            Thêm
+            {id === 'add' ? 'Thêm' : 'Cập nhật'}
           </Button>
         </form>
       </Form>

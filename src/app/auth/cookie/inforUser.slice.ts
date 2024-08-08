@@ -13,23 +13,23 @@ const initialState: inforUserState = {
   gender: '',
   name: '',
   age: 0,
-  address: '',
+  address: ''
 }
 
 const inforUserSlice = createSlice({
   name: 'inforUser',
   initialState,
   reducers: {
-    startApp: (state, action: PayloadAction<inforUserState>) => {
-      state.email = action.payload.email,
-      state.gender = action.payload.gender,
-      state.name = action.payload.name,
-      state.age = action.payload.age,
-      state.address = action.payload.address
+    startAppUser: (state, action: PayloadAction<inforUserState>) => {
+      ;(state.email = action.payload.email),
+        (state.gender = action.payload.gender),
+        (state.name = action.payload.name),
+        (state.age = action.payload.age),
+        (state.address = action.payload.address)
     }
   }
 })
 
 const inforUserReducer = inforUserSlice.reducer
-export const { startApp } = inforUserSlice.actions
+export const { startAppUser } = inforUserSlice.actions
 export default inforUserReducer

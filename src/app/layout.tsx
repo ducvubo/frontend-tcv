@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
-import { StoreProvider } from './StoreProvider'
+import { StoreProvider } from './redux/StoreProvider'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import RefreshToken from './auth/cookie/refresh-token'

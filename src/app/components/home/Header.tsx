@@ -21,6 +21,21 @@ import {
   FaSackDollar,
   FaScaleBalanced
 } from 'react-icons/fa6'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuPortal,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { LiaCoinsSolid, LiaMedalSolid, LiaUserEditSolid } from 'react-icons/lia'
 import { RiFileUserLine } from 'react-icons/ri'
 import { ImProfile } from 'react-icons/im'
@@ -367,13 +382,27 @@ export default function Header() {
         </NavigationMenu>
       </div>
       <div className='ml-64 mt-4 flex gap-4'>
-        <Button variant='outline'>
-          <Link
-            href={`${process.env.NEXT_PUBLIC_HOST_SSO}/auth/login?apikey=${process.env.NEXT_PUBLIC_API_KEY_SSO}&serviceUrl=${process.env.NEXT_PUBLIC_HOST_FRONTEND}`}
-          >
-            Đăng nhập
-          </Link>
-        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant='outline'>Đăng nhập</Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className='w-44'>
+            <DropdownMenuGroup>
+              <DropdownMenuItem>
+                <Link href={'/auth/company/login'}>Bạn là nhà tuyển dụng</Link>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>
+                <Link
+                  href={`${process.env.NEXT_PUBLIC_HOST_SSO}/auth/login?apikey=${process.env.NEXT_PUBLIC_API_KEY_SSO}&serviceUrl=${process.env.NEXT_PUBLIC_HOST_FRONTEND}`}
+                >
+                  Bạn là ứng viên
+                </Link>
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
+
         <Button variant='topcv'>
           <Link
             href={`${process.env.NEXT_PUBLIC_HOST_SSO}/auth/register?apikey=${process.env.NEXT_PUBLIC_API_KEY_SSO}&serviceUrl=${process.env.NEXT_PUBLIC_HOST_FRONTEND}`}

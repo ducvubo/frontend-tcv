@@ -53,24 +53,6 @@ export function DataTablePagination({ current, pages, setCurrent, pageSize, setP
               </SelectGroup>
             </SelectContent>
           </Select>
-          {/* <Select
-            value={`${table.getState().pagination.pageSize}`}
-            onValueChange={(value) => {
-              console.log(value)
-              table.setPageSize(Number(value))
-            }}
-          >
-            <SelectTrigger className='h-8 w-[70px]'>
-              <SelectValue placeholder={table.getState().pagination.pageSize} />
-            </SelectTrigger>
-            <SelectContent side='top'>
-              {pageSize.map((pageSize) => (
-                <SelectItem key={pageSize} value={`${pageSize}`}>
-                  {pageSize}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select> */}
         </div>
         <div className='flex w-[100px] items-center justify-center text-sm font-medium'>
           Page {current + 1} of {pages}

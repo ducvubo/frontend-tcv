@@ -2,28 +2,22 @@ import { hashPayLoad } from '@/app/utils'
 import { cookies } from 'next/headers'
 
 export async function POST(request: Request) {
-  // const header = request.headers
-  // const nonce = header.get('nonce') || ''
-  // const stime = header.get('stime') || ''
-  // const sign = header.get('sign') || ''
-  // const version = header.get('version') || ''
   const cookieStore = cookies()
-  const access_token = cookieStore.get('access_token')?.value
   const refresh_token = cookieStore.get('refresh_token')?.value
-  if (!access_token || !refresh_token) {
-    return new Response(JSON.stringify({ message: 'No cookies found', statusCodes: 400 }), {
-      status: 400
-    })
-  }
-  if (access_token && refresh_token) {
+  const cp_refresh_token = cookieStore.get('cp_refresh_token')?.value
+  // if ((!access_token && !refresh_token) || (!cp_access_token && !cp_refresh_token)) {
+  //   return new Response(JSON.stringify({ message: 'No cookies found', statusCodes: 400 }), {
+  //     status: 400
+  //   })
+  // }
+  if (refresh_token) {
     try {
-      const { dataHash, nonce, sign, stime, version } = hashPayLoad({ access_token, refresh_token })
+      const { dataHash, nonce, sign, stime, version } = hashPayLoad({ refresh_token })
       const res = await fetch(`${process.env.API_BACKEND}/users/refresh-token`, {
         method: 'POST',
         headers: {
           key: process.env.API_KEY_BACKEND as string,
           secret: process.env.API_SECRET_BACKEND as string,
-          Authorization: `Bearer ${access_token}`,
           'x-rf-tk': refresh_token,
           'Content-Type': 'application/json',
           nonce,
@@ -47,14 +41,20 @@ export async function POST(request: Request) {
         const responseHeaders = new Headers()
         responseHeaders.append('Set-Cookie', accessCookie)
         responseHeaders.append('Set-Cookie', refreshCookie)
-        return new Response(JSON.stringify({ message: 'ok ok ok', statusCodes: 200 }), {
+        return new Response(JSON.stringify({ message: 'ok ok ok', statusCodes: 200, type: 'user' }), {
           status: 200,
           headers: responseHeaders
         })
       }
       if (data.statusCode === 403) {
-        return new Response(JSON.stringify({ message: 'Forbidden', statusCodes: 403 }), {
-          status: 403
+        const accessCookie = `access_token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; SameSite=Strict`
+        const refreshCookie = `refresh_token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; SameSite=Strict`
+        const responseHeaders = new Headers()
+        responseHeaders.append('Set-Cookie', accessCookie)
+        responseHeaders.append('Set-Cookie', refreshCookie)
+        return new Response(JSON.stringify({ message: 'Unauthorized1', statusCodes: 403 }), {
+          status: 403,
+          headers: responseHeaders
         })
       } else {
         const accessCookie = `access_token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; SameSite=Strict`
@@ -73,25 +73,83 @@ export async function POST(request: Request) {
       const responseHeaders = new Headers()
       responseHeaders.append('Set-Cookie', accessCookie)
       responseHeaders.append('Set-Cookie', refreshCookie)
-      return new Response(JSON.stringify({ message: 'Unauthorized1', statusCodes: 401 }), {
-        status: 401,
+      return new Response(JSON.stringify({ message: 'Unauthorized1', statusCodes: 403 }), {
+        status: 403,
         headers: responseHeaders
       })
     }
   }
-}
+  if (cp_refresh_token) {
+    try {
+      const { dataHash, nonce, sign, stime, version } = hashPayLoad({ cp_refresh_token })
+      const res = await fetch(`${process.env.API_BACKEND}/auth/company/refresh-token`, {
+        method: 'POST',
+        headers: {
+          key: process.env.API_KEY_BACKEND as string,
+          secret: process.env.API_SECRET_BACKEND as string,
+          'x-rf-tk-cp': `Bearer ${cp_refresh_token}`,
+          'Content-Type': 'application/json',
+          nonce,
+          stime,
+          sign,
+          version
+        },
+        body: JSON.stringify(dataHash)
+      })
+      const data = await res.json()
+      if (data.statusCode === 201) {
+        const refreshExpires = new Date()
+        refreshExpires.setDate(refreshExpires.getDate() + Number(process.env.NEXT_PUBLIC_TOKEN_EXPIRES_SSO as string)) // Set expires to 15 days from now
+        const accessCookie = `cp_access_token=${
+          data.metaData.cp_access_token
+        }; Path=/; HttpOnly; Expires=${refreshExpires.toUTCString()}); SameSite=Lax; Secure;`
+        const refreshCookie = `cp_refresh_token=${
+          data.metaData.cp_refresh_token
+        }; Path=/; HttpOnly; Expires=${refreshExpires.toUTCString()}; SameSite=Lax; Secure ;`
 
-// export async function GET(request: Request) {
-//   const cookieStore = cookies()
-//   const access_token = cookieStore.get('access_token')?.value
-//   const refresh_token = cookieStore.get('refresh_token')?.value
-//   if (!access_token || !refresh_token) {
-//     return new Response(JSON.stringify({ message: 'No cookies found', statusCodes: 400 }), {
-//       status: 400
-//     })
-//   } else {
-//     return new Response(JSON.stringify({ access_token, refresh_token }), {
-//       status: 200
-//     })
-//   }
-// }
+        const responseHeaders = new Headers()
+        responseHeaders.append('Set-Cookie', accessCookie)
+        responseHeaders.append('Set-Cookie', refreshCookie)
+        return new Response(JSON.stringify({ message: 'ok ok ok', statusCodes: 200, type: 'company' }), {
+          status: 200,
+          headers: responseHeaders
+        })
+      }
+      if (data.statusCode === 403) {
+        const accessCookie = `cp_access_token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; SameSite=Strict`
+        const refreshCookie = `cp_refresh_token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; SameSite=Strict`
+        const responseHeaders = new Headers()
+        responseHeaders.append('Set-Cookie', accessCookie)
+        responseHeaders.append('Set-Cookie', refreshCookie)
+        return new Response(JSON.stringify({ message: 'Unauthorized1', statusCodes: 403 }), {
+          status: 403,
+          headers: responseHeaders
+        })
+      } else {
+        const accessCookie = `cp_access_token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; SameSite=Strict`
+        const refreshCookie = `cp_refresh_token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; SameSite=Strict`
+        const responseHeaders = new Headers()
+        responseHeaders.append('Set-Cookie', accessCookie)
+        responseHeaders.append('Set-Cookie', refreshCookie)
+        return new Response(JSON.stringify({ message: 'Unauthorized1', statusCodes: 401 }), {
+          status: 401,
+          headers: responseHeaders
+        })
+      }
+    } catch (error) {
+      const accessCookie = `cp_access_token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; SameSite=Strict`
+      const refreshCookie = `cp_refresh_token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; SameSite=Strict`
+      const responseHeaders = new Headers()
+      responseHeaders.append('Set-Cookie', accessCookie)
+      responseHeaders.append('Set-Cookie', refreshCookie)
+      return new Response(JSON.stringify({ message: 'Unauthorized1', statusCodes: 403 }), {
+        status: 403,
+        headers: responseHeaders
+      })
+    }
+  } else {
+    return new Response(JSON.stringify({ message: 'No cookies found', statusCodes: 400 }), {
+      status: 400
+    })
+  }
+}

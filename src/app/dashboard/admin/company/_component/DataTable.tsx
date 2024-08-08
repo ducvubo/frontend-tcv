@@ -17,12 +17,14 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
+import { Skeleton } from '@/components/ui/skeleton'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
 import React, { useEffect } from 'react'
 import { Input, InputBanner } from '@/components/ui/input'
-import { FormAddCompany } from './AddCompany'
+import { FormAddCompany } from './AddOrEditCompany'
 import Link from 'next/link'
+import { Separator } from '@/components/ui/separator'
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -122,10 +124,12 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
                 </TableRow>
               ))
             ) : (
-              <TableRow>
-                <TableCell colSpan={columns.length} className='h-24 text-center'>
-                  No results.
-                </TableCell>
+              <TableRow className='flex flex-col'>
+                {Array.from({ length: 10 }).map((_, index) => (
+                  <TableCell colSpan={columns.length} className=' text-center'>
+                    <Skeleton className='w-[1000px] h-[20px]  rounded-full' />
+                  </TableCell>
+                ))}
               </TableRow>
             )}
           </TableBody>

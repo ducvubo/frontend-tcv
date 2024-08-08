@@ -1,6 +1,6 @@
 import { Archive, ArchiveX, File, Inbox, LucideIcon, Send, Trash2 } from 'lucide-react'
 
-export const conTenSideBar: {
+export const conTenSideBarCompany: {
   title: string
   label?: string
   icon: LucideIcon
@@ -12,14 +12,37 @@ export const conTenSideBar: {
     label: '128',
     icon: Inbox,
     variant: 'ghost',
-    link: '/admin/company'
+    link: '/dashboard/admin/company'
   },
   {
     title: 'Drafts',
     label: '9',
     icon: File,
     variant: 'ghost',
-    link: '/admin/user'
+    link: '/dashboard/admin/user'
+  }
+]
+
+export const conTenSideBarAdmin: {
+  title: string
+  label?: string
+  icon: LucideIcon
+  variant: 'default' | 'ghost'
+  link?: string
+}[] = [
+  {
+    title: 'Quản lý công ty',
+    label: '128',
+    icon: Inbox,
+    variant: 'ghost',
+    link: '/dashboard/admin/company'
+  },
+  {
+    title: 'Drafts',
+    label: '9',
+    icon: File,
+    variant: 'ghost',
+    link: '/dashboard/admin/user'
   },
   {
     title: 'Sent',

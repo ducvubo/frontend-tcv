@@ -4,7 +4,8 @@ import { redirect, useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { toast } from 'react-toastify'
-import { inforUserState, startApp } from './inforUser.slice'
+import { inforUserState, startAppUser } from './inforUser.slice'
+import { inforCompanyState, startAppCompany } from './inforCompany.slice'
 export default function RefreshToken() {
   const Params = useSearchParams()
   const access_token = Params.get('access_token')
@@ -13,8 +14,12 @@ export default function RefreshToken() {
   const dispatch = useDispatch()
   const router = useRouter()
 
-  const runApp = (inforUser: inforUserState) => {
-    dispatch(startApp(inforUser))
+  const runAppUser = (inforUser: inforUserState) => {
+    dispatch(startAppUser(inforUser))
+  }
+
+  const runAppCompany = (inforCompany: inforCompanyState) => {
+    dispatch(startAppCompany(inforCompany))
   }
 
   const fetchData = async () => {
@@ -33,25 +38,43 @@ export default function RefreshToken() {
       const refreshData = await refreshResponse.json()
 
       if (refreshData.statusCodes === 200) {
-        const { sign, stime, version, nonce } = genSignEndPoint()
-        const userResponse = await fetch(`http://localhost:3000/api/oauth/infor-user`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            sign,
-            stime: stime.toString(),
-            version,
-            nonce
+        if (refreshData.type === 'user') {
+          const { sign, stime, version, nonce } = genSignEndPoint()
+          const userResponse = await fetch(`http://localhost:3000/api/oauth/infor-user`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              sign,
+              stime: stime.toString(),
+              version,
+              nonce
+            }
+          })
+          const userData = await userResponse.json()
+          if (userData.statusCodes === 200) {
+            runAppUser(userData.data)
           }
-        })
-        const userData = await userResponse.json()
-        if (userData.statusCodes === 200) {
-          runApp(userData.data)
-        } else {
-          router.push('/')
+        } else if (refreshData.type === 'company') {
+          const { sign, stime, version, nonce } = genSignEndPoint()
+          const InforCompany = await fetch(`http://localhost:3000/api/oauth/infor-company`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              sign,
+              stime: stime.toString(),
+              version,
+              nonce
+            }
+          })
+          const companyData = await InforCompany.json()
+          if (companyData.statusCodes === 200) {
+            runAppCompany(companyData.data)
+          } else {
+            toast.error('Đã có lỗi xảy ra vui lòng thử lại')
+          }
         }
       } else {
-        router.push('/')
+        // router.push('/')
       }
     } catch (err) {
       console.log(err)
@@ -88,7 +111,7 @@ export default function RefreshToken() {
             .then((r) => r.json())
             .then((data) => {
               if (data.statusCodes === 200) {
-                runApp(data.data)
+                runAppUser(data.data)
                 toast.success('Đăng nhập thành công')
                 router.push('/')
               }

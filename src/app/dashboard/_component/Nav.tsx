@@ -3,10 +3,6 @@ import { LucideIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { buttonVariants } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
-import { usePathname, useRouter } from 'next/navigation'
-import { useSelector } from 'react-redux'
-import { RootState } from '@/app/store'
-import { cookies } from 'next/headers'
 export interface NavProps {
   isCollapsed: boolean
   link: {
@@ -21,7 +17,7 @@ export interface NavProps {
 
 export function Nav({ link, isCollapsed, pathname }: NavProps) {
   // const pathname = usePathname().split('/').pop()
-  
+
   const links = link.map((item) => {
     if (item.link === pathname) {
       return {

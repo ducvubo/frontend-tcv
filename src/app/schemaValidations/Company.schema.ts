@@ -68,7 +68,18 @@ export const taskSchema = z.object({
   priority: z.string()
 })
 
-export type Task = z.infer<typeof taskSchema>
+export const LoginCompanyBody = z.object({
+  company_email: z.string({ message: 'Email phải là dạng chuỗi' }),
+  company_password: z.string({ message: 'Password có dạng chuỗi' })
+  // .min(8, { message: 'Password tối thiểu 8 kí tự' })
+  // .max(100, 'Mật khẩu không được quá 100 ký tự')
+  // .regex(/[a-z]/, 'Mật khẩu phải chứa ít nhất một chữ cái viết thường')
+  // .regex(/[A-Z]/, 'Mật khẩu phải chứa ít nhất một chữ cái viết hoa')
+  // .regex(/[0-9]/, 'Mật khẩu phải chứa ít nhất một chữ số')
+  // .regex(/[^a-zA-Z0-9]/, 'Mật khẩu phải chứa ít nhất một ký tự đặc biệt')
+})
 
+export type Task = z.infer<typeof taskSchema>
 export type AddCompanyBodyType = z.TypeOf<typeof CompanyBody>
 export type AddCompanyResType = z.TypeOf<typeof AddCompanyRes>
+export type LoginCompanyBodyType = z.TypeOf<typeof LoginCompanyBody>

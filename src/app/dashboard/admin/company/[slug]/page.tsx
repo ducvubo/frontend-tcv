@@ -1,6 +1,6 @@
 'use client'
 import React, { useEffect, useState } from 'react'
-import { FormAddCompany } from '../_component/AddCompany'
+import { FormAddCompany } from '../_component/AddOrEditCompany'
 import { genSignEndPoint } from '@/app/utils'
 import { ICompanyList } from '../Company.interface'
 

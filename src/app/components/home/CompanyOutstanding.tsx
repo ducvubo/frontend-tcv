@@ -1,5 +1,12 @@
+'use client'
 import React from 'react'
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel'
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious
+} from '@/components/ui/carsousel.custom'
 import Image from 'next/image'
 export default function CompanyOutstanding() {
   return (
@@ -13,7 +20,7 @@ export default function CompanyOutstanding() {
           className='w-full max-w-[1160px]'
         >
           <CarouselContent>
-            {Array.from({ length: 5 }).map((_, index) => (
+            {Array.from({ length: 20 }).map((_, index) => (
               <CarouselItem key={index} className='md:basis-1/2 lg:basis-1/4'>
                 <div className='p-1 border-[#ccc] rounded-2xl border w-[268px] h-[206px] flex justify-center items-center flex-col gap-5 hover:border-[#00b14f] hover:shadow-lg hover:shadow-cyan-500/50'>
                   <Image

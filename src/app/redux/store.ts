@@ -1,15 +1,17 @@
 import { configureStore } from '@reduxjs/toolkit'
-import blogReducer from './blog/blog.slice'
-import { blogApi } from './blog/blog.service'
+import blogReducer from '../blog/blog.slice'
+import { blogApi } from '../blog/blog.service'
 import { setupListeners } from '@reduxjs/toolkit/query'
-import { rtkQueryErrorLogger } from './blog/middleware'
-import inforUserReducer from './auth/cookie/inforUser.slice'
+import { rtkQueryErrorLogger } from '../blog/middleware'
+import inforUserReducer from '../auth/cookie/inforUser.slice'
+import inforCompanyReducer from '../auth/cookie/inforCompany.slice'
 // ...
 
 export const store = configureStore({
   reducer: {
     blog: blogReducer,
     inforUser: inforUserReducer,
+    inforCompany: inforCompanyReducer,
     [blogApi.reducerPath]: blogApi.reducer //thêm reducer đuợc tạo từ api slice
   },
   //Thêm api middleware để enable các tính năng như caching, invalidation, polling của rtk query

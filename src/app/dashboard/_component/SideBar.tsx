@@ -5,11 +5,11 @@ import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/componen
 import { Separator } from '@/components/ui/separator'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { Nav } from './Nav'
-import { conTenSideBar } from '@/app/(dashboard)/_component/ContentSideBar'
+import { conTenSideBarAdmin, conTenSideBarCompany } from '@/app/dashboard/_component/ContentSideBar'
 import { useSelector } from 'react-redux'
-import { RootState } from '@/app/store'
 import { usePathname } from 'next/navigation'
 import { cookies } from 'next/headers'
+import { RootState } from '@/app/redux/store'
 
 interface SideBarProps {
   defaultLayout?: number[] | undefined
@@ -19,7 +19,6 @@ interface SideBarProps {
 }
 
 export function SideBar({
-  // defaultLayout = [20, 10, 20],
   defaultLayout = [10, 32, 48],
   defaultCollapsed = false,
   navCollapsedSize = 4,
@@ -33,6 +32,10 @@ export function SideBar({
     ? useSelector((state: RootState) => state.inforUser)
     : null
 
+  const inforCompany = useSelector((state: RootState) => state.inforCompany)
+    ? useSelector((state: RootState) => state.inforCompany)
+    : null
+
   return (
     <TooltipProvider delayDuration={0}>
       <ResizablePanelGroup
@@ -40,29 +43,6 @@ export function SideBar({
         onLayout={(sizes: number[]) => {}}
         className='h-full max-h-[800px] items-stretch'
       >
-        {/* <ResizablePanel
-          defaultSize={defaultLayout[2]}
-          collapsedSize={navCollapsedSize}
-          collapsible={true}
-          minSize={10}
-          maxSize={55}
-          onCollapse={() => {
-            setIsCollapsed(true)
-          }}
-          onResize={() => {
-            setIsCollapsed(false)
-          }}
-          className={cn(isCollapsed && 'min-w-[50px] transition-all duration-300 ease-in-out')}
-        >
-          <div className={cn('flex h-[52px] items-center justify-center', isCollapsed ? 'h-[52px]' : 'px-2')}>
-            {inforUser ? inforUser.name : null}
-          </div>
-          <Separator />
-          <Nav isCollapsed={isCollapsed} link={conTenSideBar} />
-          <Separator />
-          <Nav isCollapsed={isCollapsed} link={conTenSideBar} />
-        </ResizablePanel> */}
-        {/* <ResizableHandle withHandle /> */}
         <ResizablePanel
           defaultSize={defaultLayout[0]}
           collapsedSize={navCollapsedSize}
@@ -81,9 +61,13 @@ export function SideBar({
             {inforUser ? inforUser.name : null}
           </div>
           <Separator />
-          <Nav isCollapsed={isCollapsed} link={conTenSideBar} pathname={pathname} />
+          <Nav
+            isCollapsed={isCollapsed}
+            link={inforUser?.email ? conTenSideBarAdmin : conTenSideBarCompany}
+            pathname={pathname}
+          />
           <Separator />
-          <Nav isCollapsed={isCollapsed} link={conTenSideBar} pathname={pathname} />
+          <Nav isCollapsed={isCollapsed} link={conTenSideBarAdmin} pathname={pathname} />
         </ResizablePanel>
         <ResizableHandle withHandle />
         {children}

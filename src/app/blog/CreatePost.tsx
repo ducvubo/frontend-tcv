@@ -3,7 +3,7 @@ import React, { Fragment, useEffect, useMemo, useState } from 'react'
 import { Post } from './blog.type'
 import { useAddPostMutation, useGetPostQuery, useUpdatePostMutation } from './blog.service'
 import { useSelector } from 'react-redux'
-import { RootState } from '../store'
+import { RootState } from '../redux/store'
 import { isEntityError } from '../utils/helpers'
 import classNames from 'classnames'
 
@@ -28,7 +28,7 @@ export default function CreatePost() {
   const postId = useSelector((state: RootState) => state.blog.postId)
   const { data, refetch } = useGetPostQuery(postId, {
     skip: !postId,
-    refetchOnMountOrArgChange: true, // khoong cache
+    refetchOnMountOrArgChange: true // khoong cache
     // pollingInterval: 1000 //goi lai sau 1s
   }) //nếu không có postId thì skip,
   const [updatePost, updatePostResult] = useUpdatePostMutation()

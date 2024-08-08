@@ -52,10 +52,7 @@ export default function CompanyPage() {
   }
 
   useEffect(() => {
-    // console.log(searchParams)
-    // if (typeof window !== 'undefined') {
     fetchData(current + 1, pageSize)
-    // }
   }, [current, pageSize, searchParams])
 
   return (

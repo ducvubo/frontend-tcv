@@ -43,7 +43,6 @@ export const POST = async (req: any) => {
     })
 
     const result = await response.json()
-    console.log('Response from server:', result)
 
     return new Response(JSON.stringify(result), {
       status: result.statusCode
