@@ -27,6 +27,7 @@ interface urlImage {
   image_url_custom: string
 }
 export function FormAddCompany({ inforCompany, id }: any) {
+  const router = useRouter()
   const [file_avatar, setFile_avatar] = useState<File | null>(null)
   const inputRef_avatar = useRef<HTMLInputElement | null>(null)
   const [file_baner, setFile_baner] = useState<File | null>(null)
@@ -46,7 +47,6 @@ export function FormAddCompany({ inforCompany, id }: any) {
     image_url_local: '',
     image_url_custom: ''
   })
-  const router = useRouter()
   const form = useForm<AddCompanyBodyType>({
     resolver: zodResolver(CompanyBody),
     defaultValues: {
@@ -101,7 +101,7 @@ export function FormAddCompany({ inforCompany, id }: any) {
     try {
       const { sign, stime, version, nonce } = genSignEndPoint()
       const res = await (
-        await fetch(`${process.env.NEXT_PUBLIC_HOST_FRONTEND}/api/companies/upload`, {
+        await fetch(`${process.env.NEXT_PUBLIC_HOST_FRONTEND}/api/admin/companies/upload`, {
           method: 'POST',
           headers: {
             folder_type: type === 'avatar' ? 'images/companies/avatars' : 'images/companies/banners',
@@ -241,7 +241,7 @@ export function FormAddCompany({ inforCompany, id }: any) {
 
       if (id === 'add') {
         const res = await (
-          await fetch(`${process.env.NEXT_PUBLIC_HOST_FRONTEND}/api/companies`, {
+          await fetch(`${process.env.NEXT_PUBLIC_HOST_FRONTEND}/api/admin/companies`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -276,7 +276,7 @@ export function FormAddCompany({ inforCompany, id }: any) {
         }
       } else {
         const res = await (
-          await fetch(`${process.env.NEXT_PUBLIC_HOST_FRONTEND}/api/companies/${id}`, {
+          await fetch(`${process.env.NEXT_PUBLIC_HOST_FRONTEND}/api/admin/companies/${id}`, {
             method: 'PATCH',
             headers: {
               'Content-Type': 'application/json',
@@ -613,13 +613,6 @@ export function FormAddCompany({ inforCompany, id }: any) {
               <FormItem>
                 <FormLabel>Mô tả công ty</FormLabel>
                 <FormControl>
-                  {/* <Input placeholder='Mô tả công ty...' type='text' {...field} /> */}
-                  {/* <MdEditor
-                    style={{ height: '500px' }}
-                    renderHTML={(text: any) => mdParser.render(text)}
-                    onChange={({ text }) => field.onChange(text)}
-                    value={field.value}
-                  /> */}
                   <Controller
                     name='company_description'
                     control={control}

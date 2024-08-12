@@ -50,6 +50,7 @@ import { IoBriefcaseOutline } from 'react-icons/io5'
 import { FaMoneyCheckAlt, FaRegCompass } from 'react-icons/fa'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
+import ButtonLogin from './ButtonLogin'
 export default function Header() {
   return (
     <section className='h-[72px] mx-6 flex'>
@@ -382,27 +383,7 @@ export default function Header() {
         </NavigationMenu>
       </div>
       <div className='ml-64 mt-4 flex gap-4'>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant='outline'>Đăng nhập</Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent className='w-44'>
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <Link href={'/auth/company/login'}>Bạn là nhà tuyển dụng</Link>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <Link
-                  href={`${process.env.NEXT_PUBLIC_HOST_SSO}/auth/login?apikey=${process.env.NEXT_PUBLIC_API_KEY_SSO}&serviceUrl=${process.env.NEXT_PUBLIC_HOST_FRONTEND}`}
-                >
-                  Bạn là ứng viên
-                </Link>
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
-
+        <ButtonLogin />
         <Button variant='topcv'>
           <Link
             href={`${process.env.NEXT_PUBLIC_HOST_SSO}/auth/register?apikey=${process.env.NEXT_PUBLIC_API_KEY_SSO}&serviceUrl=${process.env.NEXT_PUBLIC_HOST_FRONTEND}`}

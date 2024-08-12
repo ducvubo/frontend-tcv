@@ -15,8 +15,6 @@ export async function POST(req: Request) {
     })
   }
   const body = await req.json()
-  // const company_address = body.company_address.map((item: any) => item.value)
-  // body.company_address = company_address
 
   const res = await fetch(`${process.env.API_BACKEND}/companies`, {
     method: 'POST',

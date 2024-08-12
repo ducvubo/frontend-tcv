@@ -25,8 +25,11 @@ export function SideBar({
   children
 }: SideBarProps) {
   const path = usePathname()
-  const segments = path.split('/')
-  const pathname = segments.slice(0, 3).join('/')
+  const pathname = path.split('/').slice(0, 4).join('/')
+  // const relativeUrl = url.replace(baseUrl, ''); // Loại bỏ phần base URL
+  // const segments = relativeUrl.split('/').slice(0, 4); // Lấy 4 phần đầu tiên của đường dẫn
+  // return segments.join('/');
+
   const [isCollapsed, setIsCollapsed] = React.useState(defaultCollapsed)
   const inforUser = useSelector((state: RootState) => state.inforUser)
     ? useSelector((state: RootState) => state.inforUser)
@@ -58,7 +61,7 @@ export function SideBar({
           className={cn(isCollapsed && 'min-w-[50px] transition-all duration-300 ease-in-out !max-w-16')}
         >
           <div className={cn('flex h-[52px] items-center justify-center', isCollapsed ? 'h-[52px]' : 'px-2')}>
-            {inforUser ? inforUser.name : null}
+            {inforUser?.name ? inforUser.name : inforCompany ? inforCompany.company_email : null}
           </div>
           <Separator />
           <Nav

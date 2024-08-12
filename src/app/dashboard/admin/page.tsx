@@ -1,5 +1,5 @@
 import React from 'react'
 
-export default function Admin() {
-  return <section></section>
+export default function AdminPage() {
+  return <section>sdfsdfsd</section>
 }

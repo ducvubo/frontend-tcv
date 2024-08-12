@@ -1,13 +1,13 @@
 import React from 'react'
-import GetPageCompany from './_component/GetPageCompany'
+import GetPageJob from './_component/GetPageJob'
 
-export default function CompanyPage() {
+export default function JobPage() {
   return (
     <>
       <div>
         <span className='font-bold text-2xl text-[#00b14f] pt-20'>Quản lý công ty</span>
       </div>
-      <GetPageCompany />
+      <GetPageJob />
     </>
   )
 }

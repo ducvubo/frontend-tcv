@@ -8,18 +8,18 @@ export const conTenSideBarCompany: {
   link?: string
 }[] = [
   {
-    title: 'Quản lý công ty',
+    title: 'Quản lý Hr',
     label: '128',
     icon: Inbox,
     variant: 'ghost',
-    link: '/dashboard/admin/company'
+    link: '/dashboard/company/hr'
   },
   {
-    title: 'Drafts',
+    title: 'Quản lý Job',
     label: '9',
     icon: File,
     variant: 'ghost',
-    link: '/dashboard/admin/user'
+    link: '/dashboard/company/job'
   }
 ]
 

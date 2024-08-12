@@ -5,7 +5,6 @@ import {
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
-  getPaginationRowModel,
   getSortedRowModel,
   SortingState,
   useReactTable,
@@ -20,18 +19,17 @@ import {
 import { Skeleton } from '@/components/ui/skeleton'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
-import React, { useEffect } from 'react'
-import { Input, InputBanner } from '@/components/ui/input'
-import { FormAddCompany } from './AddOrEditCompany'
+import React from 'react'
+import { Input } from '@/components/ui/input'
 import Link from 'next/link'
-import { Separator } from '@/components/ui/separator'
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
+  isLoading?: boolean
 }
 
-export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
+export function DataTable<TData, TValue>({ columns, data, isLoading }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
@@ -56,8 +54,6 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
   })
   return (
     <div className='h-full '>
-      {/* <DataTableViewOptions table={table} /> */}
-      {/* <DataTableToolbar table={table} /> */}
       <div className='flex items-center py-2'>
         <Input
           placeholder='Filter emails...'
@@ -65,10 +61,9 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
           onChange={(event) => table.getColumn('company_email')?.setFilterValue(event.target.value)}
           className='max-w-sm'
         />
-        <Button variant='topcv'>
-          <Link href={'/dashboard/admin/company/add'}>Thêm công ty</Link>
+        <Button variant={'topcv'}>
+          <Link href={'/dashboard/company/job/add'}>Tạo Job</Link>
         </Button>
-        {/* <InputBanner /> */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant='outline' className='ml-auto'>
@@ -125,11 +120,17 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
               ))
             ) : (
               <TableRow className='flex flex-col'>
-                {Array.from({ length: 10 }).map((_, index) => (
-                  <TableCell colSpan={columns.length} className=' text-center'>
-                    <Skeleton className='w-[1000px] h-[20px]  rounded-full' />
+                {!isLoading ? (
+                  <TableCell colSpan={columns.length} className='h-24 w-[1000px] flex justify-center items-center'>
+                    Chưa có dữ job vui lòng thêm job...
                   </TableCell>
-                ))}
+                ) : (
+                  Array.from({ length: 10 }).map((_, index) => (
+                    <TableCell colSpan={columns.length} className=' text-center'>
+                      <Skeleton className='w-[1000px] h-[20px]  rounded-full' />
+                    </TableCell>
+                  ))
+                )}
               </TableRow>
             )}
           </TableBody>

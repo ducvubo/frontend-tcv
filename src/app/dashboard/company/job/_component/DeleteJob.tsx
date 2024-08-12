@@ -16,13 +16,13 @@ import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 import { toast } from 'sonner'
 
-export default function DeleteCompany({ company }: any) {
+export default function DeleteJob({ job }: any) {
   const router = useRouter()
-  const deleteCompany = async () => {
+  const deleteProduct = async () => {
     const { nonce, sign, stime, version } = genSignEndPoint()
     try {
       const res = await (
-        await fetch(`${process.env.NEXT_PUBLIC_HOST_FRONTEND}/api/admin/companies/${company._id}`, {
+        await fetch(`${process.env.NEXT_PUBLIC_HOST_FRONTEND}/api/admin/companies/${job._id}`, {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json',
@@ -52,14 +52,14 @@ export default function DeleteCompany({ company }: any) {
         </AlertDialogTrigger>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Bạn có muốn xóa công ty không???</AlertDialogTitle>
+            <AlertDialogTitle>Bạn có muốn xóa jobkhông???</AlertDialogTitle>
             <AlertDialogDescription>
-              Công ty &rdquo;{company.company_name}&rdquo; sẽ bị chuyển vào thùng giác!
+              Job &rdquo;{job.job_name}&rdquo; sẽ bị chuyển vào thùng giác!
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Hủy</AlertDialogCancel>
-            <AlertDialogAction className='topcv' onClick={deleteCompany}>
+            <AlertDialogAction className='topcv' onClick={deleteProduct}>
               Tiếp tục
             </AlertDialogAction>
           </AlertDialogFooter>

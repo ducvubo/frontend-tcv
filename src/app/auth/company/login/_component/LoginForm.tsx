@@ -31,6 +31,7 @@ export function LoginForm() {
   }
 
   async function onSubmit(values: LoginCompanyBodyType) {
+    console.log(values)
     const { dataHash, nonce, sign, stime, version } = hashPayLoad(values)
     try {
       const res = await (
@@ -53,7 +54,6 @@ export function LoginForm() {
             onClick: () => null
           }
         })
-        router.push('/dashboard/company')
         const { sign, stime, version, nonce } = genSignEndPoint()
         const InforCompany = await fetch(`http://localhost:3000/api/oauth/infor-company`, {
           method: 'POST',
@@ -67,6 +67,7 @@ export function LoginForm() {
         })
         const companyData = await InforCompany.json()
         if (companyData.statusCodes === 200) {
+          router.push('/dashboard/company')
           loginSuccessCompany(companyData.data)
         } else {
           toast.error('Đã có lỗi xảy ra vui lòng thử lại')
