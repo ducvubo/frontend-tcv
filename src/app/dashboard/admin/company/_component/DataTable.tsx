@@ -29,9 +29,10 @@ import { Separator } from '@/components/ui/separator'
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
+  isLoading?: boolean
 }
 
-export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
+export function DataTable<TData, TValue>({ columns, data, isLoading }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
@@ -125,11 +126,17 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
               ))
             ) : (
               <TableRow className='flex flex-col'>
-                {Array.from({ length: 10 }).map((_, index) => (
-                  <TableCell colSpan={columns.length} className=' text-center'>
-                    <Skeleton className='w-[1000px] h-[20px]  rounded-full' />
+                {!isLoading ? (
+                  <TableCell colSpan={columns.length} className='h-24 w-[1000px] flex justify-center items-center'>
+                    Chưa có dữ công ty vui lòng thêm công ty...
                   </TableCell>
-                ))}
+                ) : (
+                  Array.from({ length: 10 }).map((_, index) => (
+                    <TableCell colSpan={columns.length} className=' text-center'>
+                      <Skeleton className='w-[1000px] h-[20px]  rounded-full' />
+                    </TableCell>
+                  ))
+                )}
               </TableRow>
             )}
           </TableBody>

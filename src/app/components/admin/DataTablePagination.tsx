@@ -76,7 +76,7 @@ export function DataTablePagination({ current, pages, setCurrent, pageSize, setP
             className='h-8 w-8 p-0'
             onClick={nextPage}
             // onClick={() => table.nextPage()}
-            disabled={current === pages - 1}
+            disabled={current === pages - 1 || pages === 0}
           >
             <span className='sr-only'>Go to next page</span>
             <ChevronRightIcon className='h-4 w-4' />
@@ -85,7 +85,7 @@ export function DataTablePagination({ current, pages, setCurrent, pageSize, setP
             variant='outline'
             className='hidden h-8 w-8 p-0 lg:flex'
             onClick={nextEndPage}
-            disabled={current === pages - 1 || current === pages - 2}
+            disabled={current === pages - 1 || current === pages - 2 || pages === 0}
           >
             <span className='sr-only'>Go to last page</span>
             <DoubleArrowRightIcon className='h-4 w-4' />

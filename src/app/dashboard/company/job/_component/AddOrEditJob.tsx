@@ -23,7 +23,7 @@ import { Label } from '@/components/ui/label'
 import { MdDeleteForever } from 'react-icons/md'
 import { IoMdAddCircle } from 'react-icons/io'
 import InputArr from '@/components/inputArr'
-import { hashPayLoad } from '@/app/utils'
+import { genSignEndPoint } from '@/app/utils'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
 
@@ -157,7 +157,7 @@ export default function FormAddOrEditJob({ inforJob, id }: { inforJob: any; id: 
       job_area
     }
     if (id === 'add') {
-      const { dataHash, nonce, sign, stime, version } = hashPayLoad(payload)
+      const { nonce, sign, stime, version } = genSignEndPoint()
       const res = await (
         await fetch(`${process.env.NEXT_PUBLIC_HOST_FRONTEND}/api/company/job`, {
           method: 'POST',
@@ -168,12 +168,12 @@ export default function FormAddOrEditJob({ inforJob, id }: { inforJob: any; id: 
             version,
             nonce
           },
-          body: JSON.stringify(dataHash)
+          body: JSON.stringify(payload)
         })
       ).json()
       if (res.statusCode === 201) {
-        // router.push('/dashboard/company/job')
-        // router.refresh()
+        router.push('/dashboard/company/job')
+        router.refresh()
         toast('Tạo job thành công, vui lòng chờ duyệt', {
           action: {
             label: 'Tắt',
@@ -192,7 +192,7 @@ export default function FormAddOrEditJob({ inforJob, id }: { inforJob: any; id: 
         toast.error(res.message)
       }
     } else {
-      const { dataHash, nonce, sign, stime, version } = hashPayLoad(payload)
+      const { nonce, sign, stime, version } = genSignEndPoint()
       const res = await (
         await fetch(`${process.env.NEXT_PUBLIC_HOST_FRONTEND}/api/company/job/${id}`, {
           method: 'PATCH',
@@ -203,7 +203,7 @@ export default function FormAddOrEditJob({ inforJob, id }: { inforJob: any; id: 
             version,
             nonce
           },
-          body: JSON.stringify(dataHash)
+          body: JSON.stringify(payload)
         })
       ).json()
       if (res.statusCode === 200) {

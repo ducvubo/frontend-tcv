@@ -6,6 +6,7 @@ import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import RefreshToken from './auth/cookie/refresh-token'
 import { Toaster } from '@/components/ui/sonner'
+import { SessionProvider } from 'next-auth/react'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
@@ -20,16 +21,18 @@ export default function RootLayout({
 }>) {
   return (
     <html lang='en'>
-      <StoreProvider>
-        <body className={inter.className}>
-          <ToastContainer />
-          {/* <Oauth /> */}
-          <Toaster />
-          <RefreshToken />
-          {/* <ScrollArea className='h-full w-full rounded-md border'>{children}</ScrollArea> */}
-          {children}
-        </body>
-      </StoreProvider>
+      <body className={inter.className}>
+        <StoreProvider>
+          <SessionProvider>
+            <ToastContainer />
+            {/* <Oauth /> */}
+            <Toaster />
+            <RefreshToken />
+            {/* <ScrollArea className='h-full w-full rounded-md border'>{children}</ScrollArea> */}
+            {children}
+          </SessionProvider>
+        </StoreProvider>
+      </body>
     </html>
   )
 }

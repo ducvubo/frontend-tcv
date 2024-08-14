@@ -3,8 +3,10 @@ import { genSignEndPoint } from '@/app/utils'
 import React, { useEffect, useState } from 'react'
 import FormAddOrEditJob from './AddOrEditJob'
 import { IJob } from '../job.interface'
+import { useRouter } from 'next/navigation'
 
 export default function GetDataEdit({ params }: any) {
+  const router = useRouter()
   const [inforJob, setInforJob] = useState()
   const [isLoaded, setIsLoaded] = useState(false)
 
@@ -25,7 +27,12 @@ export default function GetDataEdit({ params }: any) {
           }
         })
       ).json()
-      return res.metaData
+      if (res.statusCode === 200) {
+        return res.metaData
+      } else {
+        router.push('/dashboard/company/job')
+        router.refresh()
+      }
     }
 
     const fetchCompanyInfo = async () => {

@@ -14,7 +14,7 @@ import MarkdownIt from 'markdown-it'
 import MdEditor from 'react-markdown-editor-lite'
 import 'react-markdown-editor-lite/lib/index.css'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { genSignEndPoint, hashPayLoad } from '@/app/utils'
+import { genSignEndPoint } from '@/app/utils'
 import { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import { toast } from 'sonner'
@@ -75,7 +75,7 @@ export function FormAddCompany({ inforCompany, id }: any) {
       reset({
         company_email: inforCompany.company_email || '',
         company_phone: inforCompany.company_phone || '',
-        company_password: inforCompany ? 'nopassword' : '',
+        company_password: inforCompany?.company_password ? 'nopassword' : '',
         company_name: inforCompany.company_name || '',
         company_avatar: inforCompany.company_avatar?.image_url_cloud || '',
         company_banner: inforCompany.company_banner?.image_url_cloud || '',
@@ -237,7 +237,7 @@ export function FormAddCompany({ inforCompany, id }: any) {
     try {
       const company_address_map = payload.company_address.map((item: any) => item.value)
       payload.company_address = company_address_map
-      const { sign, stime, version, nonce, dataHash } = hashPayLoad(payload)
+      const { sign, stime, version, nonce } = genSignEndPoint()
 
       if (id === 'add') {
         const res = await (
@@ -250,7 +250,7 @@ export function FormAddCompany({ inforCompany, id }: any) {
               version,
               nonce
             },
-            body: JSON.stringify(dataHash)
+            body: JSON.stringify(payload)
           })
         ).json()
         if (res.statusCode === 201) {
@@ -261,7 +261,7 @@ export function FormAddCompany({ inforCompany, id }: any) {
               onClick: () => null
             }
           })
-          router.push('/admin/company')
+          router.push('/dashboard/admin/company')
           router.refresh()
         }
         if (res.statusCode === 400) {
@@ -285,7 +285,7 @@ export function FormAddCompany({ inforCompany, id }: any) {
               version,
               nonce
             },
-            body: JSON.stringify(dataHash)
+            body: JSON.stringify(payload)
           })
         ).json()
         if (res.statusCode === 200) {
@@ -464,7 +464,7 @@ export function FormAddCompany({ inforCompany, id }: any) {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input placeholder='Email...' type='email' {...field} />
+                    <Input placeholder='Email...' type='email' {...field} disabled={id !== 'add'} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -477,7 +477,7 @@ export function FormAddCompany({ inforCompany, id }: any) {
                 <FormItem>
                   <FormLabel>Mật khẩu</FormLabel>
                   <FormControl>
-                    <Input placeholder='Mật khẩu...' type='password' {...field} />
+                    <Input placeholder='Mật khẩu...' type='password' {...field} disabled={id !== 'add'} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

@@ -21,22 +21,22 @@ export const columns: ColumnDef<ICompanyList>[] = [
       <div className='overflow-hidden text-ellipsis whitespace-nowrap'>{row.getValue('company_email')}</div>
     )
   },
-  {
-    accessorKey: 'company_phone',
-    header: 'Phone'
-  },
-  {
-    accessorKey: 'company_website',
-    header: 'Website'
-  },
-  {
-    accessorKey: 'company_employee_total',
-    header: 'Employee Total'
-  },
-  {
-    accessorKey: 'company_business_field',
-    header: 'Business Field'
-  },
+  // {
+  //   accessorKey: 'company_phone',
+  //   header: 'Phone'
+  // },
+  // {
+  //   accessorKey: 'company_website',
+  //   header: 'Website'
+  // },
+  // {
+  //   accessorKey: 'company_employee_total',
+  //   header: 'Employee Total'
+  // },
+  // {
+  //   accessorKey: 'company_business_field',
+  //   header: 'Business Field'
+  // },
   {
     accessorKey: 'company_code_fiscal',
     header: ({ column }) => {
@@ -86,7 +86,7 @@ export const columns: ColumnDef<ICompanyList>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align='end'>
             <DropdownMenuItem>
-              <Link href={`${process.env.NEXT_PUBLIC_HOST_FRONTEND}/admin/company/${Company._id}`}>Sửa</Link>
+              <Link href={`${process.env.NEXT_PUBLIC_HOST_FRONTEND}/dashboard/admin/company/${Company._id}`}>Sửa</Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
               {typeof window !== undefined && <DeleteCompany company={Company} />}

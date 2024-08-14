@@ -1,11 +1,12 @@
 'use client'
-import { genSignEndPoint, hashPayLoad } from '@/app/utils'
+import { genSignEndPoint } from '@/app/utils'
 import { redirect, useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { toast } from 'react-toastify'
 import { inforUserState, startAppUser } from './inforUser.slice'
 import { inforCompanyState, startAppCompany } from './inforCompany.slice'
+import { useSession } from 'next-auth/react'
 export default function RefreshToken() {
   const Params = useSearchParams()
   const access_token = Params.get('access_token')
@@ -13,6 +14,7 @@ export default function RefreshToken() {
   const searchParams = useSearchParams()
   const dispatch = useDispatch()
   const router = useRouter()
+  const { data: session } = useSession()
 
   const runAppUser = (inforUser: inforUserState) => {
     dispatch(startAppUser(inforUser))
@@ -21,6 +23,8 @@ export default function RefreshToken() {
   const runAppCompany = (inforCompany: inforCompanyState) => {
     dispatch(startAppCompany(inforCompany))
   }
+
+  console.log(session)
 
   const fetchData = async () => {
     const { sign, stime, version, nonce } = genSignEndPoint()
@@ -82,7 +86,7 @@ export default function RefreshToken() {
   }
 
   const fetchDataSSO = async () => {
-    const { sign, stime, version, nonce, dataHash } = hashPayLoad({ access_token, refresh_token })
+    const { sign, stime, version, nonce } = genSignEndPoint()
     fetch('http://localhost:3000/api/oauth', {
       method: 'POST',
       headers: {
@@ -92,7 +96,7 @@ export default function RefreshToken() {
         sign,
         version
       },
-      body: JSON.stringify(dataHash)
+      body: JSON.stringify({ access_token, refresh_token })
     })
       .then((r) => r.json())
       .then((data) => {

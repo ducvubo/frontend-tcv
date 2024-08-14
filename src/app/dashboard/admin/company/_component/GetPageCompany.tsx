@@ -39,10 +39,13 @@ export default function GetPageCompany() {
   const [pageSize, setPageSize] = useState<number>(10)
   const [pages, setPages] = useState<number>(0)
   const [totalItems, setTotalItems] = useState<number>(0)
+  const [isLoading, setIsLoading] = useState(false)
 
   const fetchData = async (current: number, pageSize: number) => {
+    setIsLoading(true)
     const allCompany = await AllCompany({ current, pageSize })
     if (allCompany) {
+      setIsLoading(false)
       setData(allCompany.data)
       setPages(allCompany.meta.pages)
       setTotalItems(allCompany.meta.totalItems)
@@ -55,7 +58,7 @@ export default function GetPageCompany() {
 
   return (
     <>
-      <DataTable columns={columns} data={data} />
+      <DataTable columns={columns} data={data} isLoading={isLoading} />
       <DataTablePagination
         current={current}
         pages={pages}

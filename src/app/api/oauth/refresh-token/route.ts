@@ -1,18 +1,14 @@
-import { hashPayLoad } from '@/app/utils'
+import { genSignEndPoint } from '@/app/utils'
 import { cookies } from 'next/headers'
 
 export async function POST(request: Request) {
   const cookieStore = cookies()
   const refresh_token = cookieStore.get('refresh_token')?.value
   const cp_refresh_token = cookieStore.get('cp_refresh_token')?.value
-  // if ((!access_token && !refresh_token) || (!cp_access_token && !cp_refresh_token)) {
-  //   return new Response(JSON.stringify({ message: 'No cookies found', statusCodes: 400 }), {
-  //     status: 400
-  //   })
-  // }
+  console.log(cookieStore)
   if (refresh_token) {
     try {
-      const { dataHash, nonce, sign, stime, version } = hashPayLoad({ refresh_token })
+      const { nonce, sign, stime, version } = genSignEndPoint()
       const res = await fetch(`${process.env.API_BACKEND}/users/refresh-token`, {
         method: 'POST',
         headers: {
@@ -25,7 +21,7 @@ export async function POST(request: Request) {
           sign,
           version
         },
-        body: JSON.stringify(dataHash)
+        body: JSON.stringify(refresh_token)
       })
       const data = await res.json()
       if (data.statusCode === 201) {
@@ -81,7 +77,7 @@ export async function POST(request: Request) {
   }
   if (cp_refresh_token) {
     try {
-      const { dataHash, nonce, sign, stime, version } = hashPayLoad({ cp_refresh_token })
+      const { nonce, sign, stime, version } = genSignEndPoint()
       const res = await fetch(`${process.env.API_BACKEND}/auth/company/refresh-token`, {
         method: 'POST',
         headers: {
@@ -94,7 +90,7 @@ export async function POST(request: Request) {
           sign,
           version
         },
-        body: JSON.stringify(dataHash)
+        body: JSON.stringify(cp_refresh_token)
       })
       const data = await res.json()
       if (data.statusCode === 201) {

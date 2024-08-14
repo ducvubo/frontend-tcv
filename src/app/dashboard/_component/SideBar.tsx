@@ -26,9 +26,6 @@ export function SideBar({
 }: SideBarProps) {
   const path = usePathname()
   const pathname = path.split('/').slice(0, 4).join('/')
-  // const relativeUrl = url.replace(baseUrl, ''); // Loại bỏ phần base URL
-  // const segments = relativeUrl.split('/').slice(0, 4); // Lấy 4 phần đầu tiên của đường dẫn
-  // return segments.join('/');
 
   const [isCollapsed, setIsCollapsed] = React.useState(defaultCollapsed)
   const inforUser = useSelector((state: RootState) => state.inforUser)
@@ -38,6 +35,8 @@ export function SideBar({
   const inforCompany = useSelector((state: RootState) => state.inforCompany)
     ? useSelector((state: RootState) => state.inforCompany)
     : null
+
+  const segments = path.split('/').filter(Boolean) // Tách URL thành các phần và lọc bỏ phần trống
 
   return (
     <TooltipProvider delayDuration={0}>
@@ -66,7 +65,7 @@ export function SideBar({
           <Separator />
           <Nav
             isCollapsed={isCollapsed}
-            link={inforUser?.email ? conTenSideBarAdmin : conTenSideBarCompany}
+            link={segments[1] === 'admin' ? conTenSideBarAdmin : conTenSideBarCompany}
             pathname={pathname}
           />
           <Separator />
