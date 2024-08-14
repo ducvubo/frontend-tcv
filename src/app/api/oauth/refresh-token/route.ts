@@ -5,7 +5,6 @@ export async function POST(request: Request) {
   const cookieStore = cookies()
   const refresh_token = cookieStore.get('refresh_token')?.value
   const cp_refresh_token = cookieStore.get('cp_refresh_token')?.value
-  console.log(cookieStore)
   if (refresh_token) {
     try {
       const { nonce, sign, stime, version } = genSignEndPoint()
@@ -89,8 +88,7 @@ export async function POST(request: Request) {
           stime,
           sign,
           version
-        },
-        body: JSON.stringify(cp_refresh_token)
+        }
       })
       const data = await res.json()
       if (data.statusCode === 201) {

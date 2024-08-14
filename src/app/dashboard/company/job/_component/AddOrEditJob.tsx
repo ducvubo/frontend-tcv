@@ -114,7 +114,6 @@ export default function FormAddOrEditJob({ inforJob, id }: { inforJob: any; id: 
     }
   }, [inforJob, reset])
 
-  console.log(job_benefits)
   const { fields, append, remove } = useFieldArray({
     control: form.control,
     name: 'job_specific_location'
