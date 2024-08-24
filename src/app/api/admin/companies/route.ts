@@ -1,5 +1,4 @@
 import { cookies } from 'next/headers'
-import type { NextApiRequest, NextApiResponse } from 'next'
 export async function POST(req: Request) {
   const header = req.headers
   const nonce = header.get('nonce') || ''

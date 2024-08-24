@@ -14,7 +14,7 @@ export class InvalidEmailPasswordError extends AuthError {
 }
 
 export class SignTokenExist extends AuthError {
-  static type: string = 'Đã có lỗi xảy ra vui lòng thử lại'
+  static type: string = 'Đã có lỗi xảy ra vui lòng thử lạiq'
 }
 
 export class InternalServer extends AuthError {

@@ -82,7 +82,6 @@ export default function InputArr({
           placeholder={tag ? `${tag}` : 'Thêm tag...'}
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
-          // onKeyPress={handleKeyPress}
         />
       </div>
       <Button variant={'topcv'} type='button' onClick={addToArr}>

@@ -1,5 +1,6 @@
 import type { Config } from 'tailwindcss'
-
+const plugin = require('tailwindcss/plugin')
+const { blackA, mauve, violet, indigo, purple } = require('@radix-ui/colors')
 const config = {
   darkMode: ['class'],
   content: ['./pages/**/*.{ts,tsx}', './components/**/*.{ts,tsx}', './app/**/*.{ts,tsx}', './src/**/*.{ts,tsx}'],
@@ -14,6 +15,11 @@ const config = {
     },
     extend: {
       colors: {
+        ...blackA,
+        ...mauve,
+        ...violet,
+        ...purple,
+        ...indigo,
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
@@ -50,6 +56,7 @@ const config = {
         'custom-color': 'rgba(38, 194, 126, .4)',
         'custom-color-hover': 'rgba(16, 105, 66, .4)'
       },
+
       borderRadius: {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
@@ -63,6 +70,38 @@ const config = {
         'accordion-up': {
           from: { height: 'var(--radix-accordion-content-height)' },
           to: { height: '0' }
+        },
+        enterFromRight: {
+          from: { opacity: '0', transform: 'translateX(200px)' },
+          to: { opacity: '1', transform: 'translateX(0)' }
+        },
+        enterFromLeft: {
+          from: { opacity: '0', transform: 'translateX(-200px)' },
+          to: { opacity: '1', transform: 'translateX(0)' }
+        },
+        exitToRight: {
+          from: { opacity: '1', transform: 'translateX(0)' },
+          to: { opacity: '0', transform: 'translateX(200px)' }
+        },
+        exitToLeft: {
+          from: { opacity: '1', transform: 'translateX(0)' },
+          to: { opacity: '0', transform: 'translateX(-200px)' }
+        },
+        scaleIn: {
+          from: { opacity: '0', transform: 'rotateX(-10deg) scale(0.9)' },
+          to: { opacity: '1', transform: 'rotateX(0deg) scale(1)' }
+        },
+        scaleOut: {
+          from: { opacity: '1', transform: 'rotateX(0deg) scale(1)' },
+          to: { opacity: '0', transform: 'rotateX(-10deg) scale(0.95)' }
+        },
+        fadeIn: {
+          from: { opacity: '0' },
+          to: { opacity: '1' }
+        },
+        fadeOut: {
+          from: { opacity: '1' },
+          to: { opacity: '0' }
         }
       },
       animation: {
@@ -78,7 +117,8 @@ const config = {
         'custom-gradient-banner': 'linear-gradient(83.78deg, #122235 1.64%, #1aa357 93.62%)',
         'custom-gradient-outstanding': 'linear-gradient(90deg, #06a76a 3.77%, rgba(6, 167, 106, 0) 105.36%)',
         'custom-gradient-counttime': 'linear-gradient(180deg, #06a76a, rgba(6, 167, 106, 0))',
-        'custom-gradient-outstanding-employer': 'linear-gradient(201.63deg, #003e86 14.36%, #02d15e 95.71%)'
+        'custom-gradient-outstanding-employer': 'linear-gradient(201.63deg, #003e86 14.36%, #02d15e 95.71%)',
+        'custom-gradient-desctiption-congty': 'linear-gradient(360deg, #fff, hsla(0, 0%, 100%, 0))'
       },
       dropShadow: {
         custom: '0 2.44297px 64.1279px rgba(146, 255, 178, .4)'
@@ -86,9 +126,32 @@ const config = {
       spacing: {
         '34': '34px'
       }
+    },
+    animation: {
+      scaleIn: 'scaleIn 200ms ease',
+      scaleOut: 'scaleOut 200ms ease',
+      fadeIn: 'fadeIn 200ms ease',
+      fadeOut: 'fadeOut 200ms ease',
+      enterFromLeft: 'enterFromLeft 250ms ease',
+      enterFromRight: 'enterFromRight 250ms ease',
+      exitToLeft: 'exitToLeft 250ms ease',
+      exitToRight: 'exitToRight 250ms ease'
     }
   },
-  plugins: [require('tailwindcss-animate')]
+  plugins: [
+    require('tailwindcss-animate'),
+
+    plugin(({ matchUtilities }: any) => {
+      matchUtilities({
+        perspective: (value: any) => ({
+          perspective: value
+        }),
+        'transition-height': {
+          transition: 'height 0.3s ease'
+        }
+      })
+    })
+  ]
 } satisfies Config
 
 export default config

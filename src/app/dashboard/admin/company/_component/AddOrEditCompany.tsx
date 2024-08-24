@@ -253,6 +253,7 @@ export function FormAddCompany({ inforCompany, id }: any) {
             body: JSON.stringify(payload)
           })
         ).json()
+        console.log('res:::::::::', res)
         if (res.statusCode === 201) {
           setLoading(false)
           toast('Thêm công ty thành công', {

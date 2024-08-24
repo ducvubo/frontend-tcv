@@ -10,7 +10,10 @@ import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
 import { inforCompanyState, startAppCompany } from '@/app/auth/cookie/inforCompany.slice'
 import { useDispatch } from 'react-redux'
+import { loginCompany } from '@/app/actions/auth'
+import { useLoading } from '@/context/LoadingContext'
 export function LoginForm() {
+  const { setLoading } = useLoading()
   const router = useRouter()
   const dispatch = useDispatch()
   const form = useForm<LoginCompanyBodyType>({
@@ -27,67 +30,28 @@ export function LoginForm() {
   }
 
   async function onSubmit(values: LoginCompanyBodyType) {
-    console.log(values)
-    const { nonce, sign, stime, version } = genSignEndPoint()
-    try {
-      const res = await (
-        await fetch(`${process.env.NEXT_PUBLIC_HOST_FRONTEND}/api/auth/company/login`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            sign,
-            stime,
-            version,
-            nonce
-          },
-          body: JSON.stringify(values)
-        })
-      ).json()
-      if (res.statusCode === 201) {
-        toast('Đăng nhập thành công', {
-          action: {
-            label: 'Tắt',
-            onClick: () => null
-          }
-        })
-        const { sign, stime, version, nonce } = genSignEndPoint()
-        const InforCompany = await fetch(`http://localhost:3000/api/oauth/infor-company`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            sign,
-            stime: stime.toString(),
-            version,
-            nonce
-          }
-        })
-        const companyData = await InforCompany.json()
-        if (companyData.statusCodes === 200) {
-          router.push('/dashboard/company')
-          loginSuccessCompany(companyData.data)
-        } else {
-          toast.error('Đã có lỗi xảy ra vui lòng thử lại')
+    setLoading(true)
+    const resLogin = await loginCompany(values)
+    if (resLogin?.code === 1) {
+      toast('Đăng nhập thành công', {
+        action: {
+          label: 'Tắt',
+          onClick: () => null
         }
-      }
-      if (res.statusCode === 409) {
-        toast(`${res.message}`, {
-          action: {
-            label: 'Tắt',
-            onClick: () => null
-          }
-        })
-      }
-      if (res.statusCode === 400) {
-        res?.message.map((msg: any) => {
-          toast(`${msg}`, {
-            action: {
-              label: 'Tắt',
-              onClick: () => null
-            }
-          })
-        })
-      }
-    } catch (error) {
+      })
+      router.push('/dashboard/company/job')
+      loginSuccessCompany(resLogin.data)
+      setLoading(false)
+    } else if (resLogin?.code === -1 || resLogin?.code === -2) {
+      setLoading(false)
+      toast('Email hoặc mật khẩu không đúng', {
+        action: {
+          label: 'Tắt',
+          onClick: () => null
+        }
+      })
+    } else {
+      setLoading(false)
       toast('Đã có lỗi xảy ra vui lòng thử lại', {
         action: {
           label: 'Tắt',

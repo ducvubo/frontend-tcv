@@ -20,9 +20,9 @@ export async function POST(request: Request) {
           sign,
           version
         },
-        body: JSON.stringify(refresh_token)
       })
       const data = await res.json()
+      console.log(data)
       if (data.statusCode === 201) {
         const refreshExpires = new Date()
         refreshExpires.setDate(refreshExpires.getDate() + Number(process.env.NEXT_PUBLIC_TOKEN_EXPIRES_SSO as string)) // Set expires to 15 days from now
@@ -57,7 +57,7 @@ export async function POST(request: Request) {
         const responseHeaders = new Headers()
         responseHeaders.append('Set-Cookie', accessCookie)
         responseHeaders.append('Set-Cookie', refreshCookie)
-        return new Response(JSON.stringify({ message: 'Unauthorized1', statusCodes: 401 }), {
+        return new Response(JSON.stringify({ message: 'Unauthorized2', statusCodes: 401 }), {
           status: 401,
           headers: responseHeaders
         })
@@ -68,7 +68,7 @@ export async function POST(request: Request) {
       const responseHeaders = new Headers()
       responseHeaders.append('Set-Cookie', accessCookie)
       responseHeaders.append('Set-Cookie', refreshCookie)
-      return new Response(JSON.stringify({ message: 'Unauthorized1', statusCodes: 403 }), {
+      return new Response(JSON.stringify({ message: 'Unauthorized3', statusCodes: 403 }), {
         status: 403,
         headers: responseHeaders
       })

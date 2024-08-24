@@ -29,7 +29,7 @@ export const CompanyBody = z
         value: z
           .string({ message: 'Địa chỉ có dạng chuỗi' })
           .min(5, { message: 'Địa chỉ công ty tối thiểu 5 kí tự' })
-          .max(100, { message: 'Địa chỉ công ty tối đa 100 kí tự' })
+          .max(1000, { message: 'Địa chỉ công ty tối đa 1000 kí tự' })
       })
     ),
     company_code_fiscal: z

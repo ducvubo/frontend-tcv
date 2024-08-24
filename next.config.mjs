@@ -10,9 +10,14 @@ const nextConfig = {
         // pathname: '/photos/**'
       },
       {
-        protocol: "https",
-        hostname: "**",
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '4000'
       },
+      {
+        protocol: 'https',
+        hostname: '**'
+      }
     ]
   },
   logging: {

@@ -7,28 +7,31 @@ import { DataTablePagination } from '@/app/components/admin/DataTablePagination'
 import { ResSuccess } from '../job.interface'
 import { DataTable } from './DataTable'
 import { columns } from './ColumnTable'
+import { getJobPagination } from '../api'
 
 const AllJobWithCompany = async ({ current, pageSize }: { current?: number; pageSize?: number }) => {
-  const { sign, stime, version, nonce } = genSignEndPoint()
-  const res: ResSuccess = await (
-    await fetch(`/api/company/job?current=${current}&pageSize=${pageSize}`, {
-      cache: 'no-store',
-      method: 'GET',
-      headers: {
-        sign,
-        stime,
-        version,
-        nonce
-      }
-    })
-  ).json()
+  // const { sign, stime, version, nonce } = genSignEndPoint()
+  // const res: ResSuccess = await (
+  //   await fetch(`/api/company/job?current=${current}&pageSize=${pageSize}`, {
+  //     cache: 'no-store',
+  //     method: 'GET',
+  //     headers: {
+  //       sign,
+  //       stime,
+  //       version,
+  //       nonce
+  //     }
+  //   })
+  // ).json()
+  const res: IBackendRes<any> = await getJobPagination(current as number, pageSize as number)
+  console.log(res)
   if (res.statusCode === 200) {
     return {
       data: res.metaData.result,
       meta: res.metaData.meta
     }
   } else {
-    toast.error('Đã có lỗi xảy ra vui lòng thử lại')
+    toast.error('Đã có lỗi xảy ra vui lòng thử lại1')
   }
 }
 

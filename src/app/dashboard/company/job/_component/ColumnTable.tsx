@@ -12,13 +12,13 @@ export const columns: ColumnDef<IJob>[] = [
     accessorKey: 'job_name',
     header: 'Company Name'
   },
-  {
-    accessorKey: 'job_wage',
-    header: ({ column }) => {
-      return <DataTableColumnHeader column={column} title='Lương' />
-    },
-    cell: ({ row }) => <div className='overflow-hidden text-ellipsis whitespace-nowrap'>{row.getValue('job_wage')}</div>
-  },
+  // {
+  //   accessorKey: 'job_wage',
+  //   header: ({ column }) => {
+  //     return <DataTableColumnHeader column={column} title='Lương' />
+  //   },
+  //   cell: ({ row }) => <div className='overflow-hidden text-ellipsis whitespace-nowrap'>{row.getValue('job_wage')}</div>
+  // },
   {
     accessorKey: 'job_quantity',
     header: 'Số lượng'
