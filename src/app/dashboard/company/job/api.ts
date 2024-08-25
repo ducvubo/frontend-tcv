@@ -48,3 +48,56 @@ export const deleteJob = async (jobId: string) => {
   })
   return res
 }
+
+export const getTag = async (name: string, type: string) => {
+  let url = ''
+
+  switch (type) {
+    case 'profession':
+      url = `${process.env.API_BACKEND}/tag-professions`
+      break
+    case 'skill':
+      url = `${process.env.API_BACKEND}/tag-skills`
+      break
+    case 'area':
+      url = `${process.env.API_BACKEND}/tag-areas`
+      break
+    default:
+      throw new Error('Invalid type')
+  }
+
+  const res: IBackendRes<any> = await sendRequest({
+    method: 'GET',
+    url: url,
+    nextOption: {
+      cache: 'no-store'
+    },
+    queryParams: {
+      tag_name: name
+    }
+  })
+  return res
+}
+
+export const addTag = async (payload: any, type: string) => {
+  let url = ''
+  switch (type) {
+    case 'profession':
+      url = `${process.env.API_BACKEND}/tag-professions`
+      break
+    case 'skill':
+      url = `${process.env.API_BACKEND}/tag-skills`
+      break
+    case 'area':
+      url = `${process.env.API_BACKEND}/tag-areas`
+      break
+    default:
+      throw new Error('Invalid type')
+  }
+  const res: IBackendRes<any> = await sendRequest({
+    method: 'POST',
+    url: url,
+    body: payload
+  })
+  return res
+}

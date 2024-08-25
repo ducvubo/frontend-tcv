@@ -31,7 +31,9 @@ export function LoginForm() {
 
   async function onSubmit(values: LoginCompanyBodyType) {
     setLoading(true)
+
     const resLogin = await loginCompany(values)
+    
     if (resLogin?.code === 1) {
       toast('Đăng nhập thành công', {
         action: {

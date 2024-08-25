@@ -37,6 +37,10 @@ import {
 import { addJob, updateJob } from '../api'
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import GlobalLoading from '@/components/GlobalLoading'
+import { useLoading } from '@/context/LoadingContext'
+import TagProfession from './Tag'
+import Tag from './Tag'
 
 const mdParser = new MarkdownIt()
 const markdownDefault = {
@@ -125,13 +129,14 @@ interface IAddressData {
 
 export default function FormAddOrEditJob({ inforJob, id }: { inforJob: any; id: string }) {
   const router = useRouter()
+  const { setLoading } = useLoading()
   const [job_requirements, setJob_requirements] = useState<IMarkDown>(markdownDefault)
   const [job_benefits, setJob_benefits] = useState<IMarkDown>(markdownDefault)
   const [job_additional_requirements, setJob_additional_requirements] = useState<IMarkDown>(markdownDefault)
   const [job_description, setJob_description] = useState<IMarkDown>(markdownDefault)
-  const [job_career, setJob_career] = useState<string[]>([])
-  const [job_skills, setJob_skills] = useState<string[]>([])
-  const [job_area, setJob_area] = useState<string[]>([])
+  const [job_career, setJob_career] = useState<{ name: string; _id: string }[]>([])
+  const [job_skills, setJob_skills] = useState<{ name: string; _id: string }[]>([])
+  const [job_area, setJob_area] = useState<{ name: string; _id: string }[]>([])
   const [job_wage, setJob_wage] = useState<IWageWageIP>({ option: 'range' })
 
   const [provinces, setProvinces] = useState<IAddress[]>([])
@@ -322,6 +327,7 @@ export default function FormAddOrEditJob({ inforJob, id }: { inforJob: any; id: 
   }
 
   async function onSubmit(values: JobBodyType) {
+    setLoading(true)
     const transformedValues = values.job_specific_location.map((location) => {
       // Tìm tỉnh dựa trên ID
       const province = provinces.find((p) => p.id === location.job_location_province) || { id: '', full_name: '' }
@@ -384,7 +390,9 @@ export default function FormAddOrEditJob({ inforJob, id }: { inforJob: any; id: 
 
     if (id === 'add') {
       const res = await addJob(payload)
+
       if (res.statusCode === 201) {
+        setLoading(false)
         // router.push('/dashboard/company/job')
         router.refresh()
         toast('Tạo job thành công, vui lòng chờ duyệt', {
@@ -395,6 +403,8 @@ export default function FormAddOrEditJob({ inforJob, id }: { inforJob: any; id: 
         })
       }
       if (res.statusCode === 400) {
+        setLoading(false)
+
         if (Array.isArray(res.message)) {
           res.message.map((item: string) => {
             toast.error(item)
@@ -404,15 +414,20 @@ export default function FormAddOrEditJob({ inforJob, id }: { inforJob: any; id: 
         }
       }
       if (res.statusCode === 409) {
+        setLoading(false)
+
         toast.error(res.message)
       } else {
+        setLoading(false)
+
         toast.error(res.message)
       }
     } else {
       try {
-        console.log(payload)
         const res = await updateJob(id, payload)
         if (res.statusCode === 200) {
+          setLoading(false)
+
           router.push('/dashboard/company/job')
           router.refresh()
           toast('Chỉnh sửa job thành công', {
@@ -423,6 +438,7 @@ export default function FormAddOrEditJob({ inforJob, id }: { inforJob: any; id: 
           })
         }
         if (res.statusCode === 400) {
+          setLoading(false)
           if (Array.isArray(res.message)) {
             res.message.map((item: string) => {
               toast.error(item)
@@ -432,15 +448,18 @@ export default function FormAddOrEditJob({ inforJob, id }: { inforJob: any; id: 
           }
         }
         if (res.statusCode === 409) {
+          setLoading(false)
           toast.error(res.message)
         }
       } catch (error) {
+        setLoading(false)
         toast.error('Đã có lỗi xảy ra vui lòng thử lại')
         console.log(error)
       }
     }
   }
 
+  console.log(job_career)
   return (
     <Form {...form}>
       <form
@@ -762,96 +781,6 @@ export default function FormAddOrEditJob({ inforJob, id }: { inforJob: any; id: 
         <div className='w-full'>
           {fields.map((item, index) => (
             <div key={index} className='flex gap-4 w-full'>
-              {/* <Controller
-                name={`job_specific_location.${index}.job_location_province`}
-                control={control}
-                render={({ field }) => (
-                  <FormItem className='w-1/4'>
-                    <FormLabel>Tỉnh/Thành *</FormLabel>
-                    <FormControl>
-                      <Select
-                        {...field}
-                        onValueChange={(value) => handleProvinceChange(index, value)}
-                        value={field.value}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder='Select Tỉnh/Thành' />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {provinces.map((province) => (
-                            <SelectItem key={province.id} value={province.id}>
-                              {province.full_name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <Controller
-                name={`job_specific_location.${index}.job_location_district`}
-                control={control}
-                render={({ field }) => (
-                  <FormItem className='w-1/4'>
-                    <FormLabel>Quận/Huyện *</FormLabel>
-                    <FormControl>
-                      <Select
-                        {...field}
-                        onValueChange={(value) => handleDistrictChange(index, value)}
-                        value={field.value}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder='Select Quận/Huyện' />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {(
-                            districts[
-                              parseInt(form.getValues(`job_specific_location.${index}.job_location_province`))
-                            ] || []
-                          ).map((district) => (
-                            <SelectItem key={district.id} value={district.id}>
-                              {district.full_name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <Controller
-                name={`job_specific_location.${index}.job_location_ward`}
-                control={control}
-                render={({ field }) => (
-                  <FormItem className='w-1/4'>
-                    <FormLabel>Phường/Xã *</FormLabel>
-                    <FormControl>
-                      <Select {...field} onValueChange={(value) => handleWardChange(index, value)} value={field.value}>
-                        <SelectTrigger>
-                          <SelectValue placeholder='Select Phường/Xã' />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {(
-                            wards[parseInt(form.getValues(`job_specific_location.${index}.job_location_district`))] ||
-                            []
-                          ).map((ward) => (
-                            <SelectItem key={ward.id} value={ward.id}>
-                              {ward.full_name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              /> */}
-
               <Controller
                 name={`job_specific_location.${index}.job_location_province`}
                 control={control}
@@ -1106,14 +1035,15 @@ export default function FormAddOrEditJob({ inforJob, id }: { inforJob: any; id: 
           />
         </div>
         <Label>Ngành nghề</Label>
-        <InputArr data={job_career} setData={setJob_career} tag='Thêm tag ngành nghề' className='w-full' />
+        <Tag data={job_career} setData={setJob_career} tag='Thêm tag ngành nghề' className='w-full' type='profession' />
         <Label>Kỹ năng</Label>
-        <InputArr data={job_skills} setData={setJob_skills} tag='Thêm tag kỹ năng' className='w-full' />
+        <Tag data={job_skills} setData={setJob_skills} tag='Thêm tag kỹ năng' className='w-full' type='skill' />
         <Label>Khu vực làm việc</Label>
-        <InputArr data={job_area} setData={setJob_area} tag='Thêm tag khu vực làm việc' className='w-full' />
+        <Tag data={job_area} setData={setJob_area} tag='Thêm tag khu vực làm việc' className='w-full' type='area' />
         <Label className='opacity-65'>Những trường có dấu * là bắt buộc</Label>
+
         <Button type='submit' className='!mt-4 w-full' variant={'topcv'}>
-          Thêm
+          {id === 'add' ? 'Tạo job' : 'Chỉnh sửa job'}
         </Button>
       </form>
     </Form>
