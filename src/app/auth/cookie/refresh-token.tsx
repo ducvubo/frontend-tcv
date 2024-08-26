@@ -1,6 +1,6 @@
 'use client'
 import { redirect, useRouter, useSearchParams } from 'next/navigation'
-import { useEffect } from 'react'
+import { useEffect, useLayoutEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import { inforUserState, startAppUser } from './inforUser.slice'
 import { inforCompanyState, startAppCompany } from './inforCompany.slice'
@@ -54,11 +54,11 @@ export default function RefreshToken() {
     } else {
       setLoading(false)
       toast.error('Đã có lỗi xảy ra vui lòng thử lại')
-      redirect('/')
+      router.push('/')
     }
   }
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (access_token || refresh_token) {
       fetchDataSSO()
       const interval = setInterval(() => {

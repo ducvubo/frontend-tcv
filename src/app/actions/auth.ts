@@ -17,7 +17,6 @@ export const refreshToken = async () => {
       url: `${process.env.API_BACKEND}/users/refresh-token`,
       method: 'POST'
     })
-    console.log(res)
     if (res.statusCode === 201 && res.metaData && res.metaData.access_token && res.metaData.refresh_token) {
       const resPro: [any, any, IBackendRes<any>] = await Promise.all([
         await cookies().set({

@@ -20,20 +20,7 @@ export default function GetDataEdit({ params }: any) {
       if (id === 'add') {
         return
       }
-      // const { nonce, sign, stime, version } = genSignEndPoint()
-      // const res = await (
-      //   await fetch(`${process.env.NEXT_PUBLIC_HOST_FRONTEND}/api/company/job/${id}`, {
-      //     method: 'GET',
-      //     headers: {
-      //       nonce,
-      //       sign,
-      //       stime,
-      //       version
-      //     }
-      //   })
-      // ).json()
       const res = await getDataEdit(id)
-      console.log(res)
       if (res.statusCode === 200) {
         setLoading(false)
         return res.metaData
@@ -59,5 +46,4 @@ export default function GetDataEdit({ params }: any) {
 
   useEffect(() => {}, [inforJob])
   return <FormAddOrEditJob inforJob={inforJob} id={params.slug} />
-  // return <FormAddOrEditJobTest inforJob={inforJob} id={params.slug} />
 }

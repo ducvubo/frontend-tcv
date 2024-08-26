@@ -65,11 +65,12 @@ export function SideBar({
           <Separator />
           <Nav
             isCollapsed={isCollapsed}
+            setIsCollapsed={setIsCollapsed}
             link={segments[1] === 'admin' ? conTenSideBarAdmin : conTenSideBarCompany}
             pathname={pathname}
           />
-          <Separator />
-          <Nav isCollapsed={isCollapsed} link={conTenSideBarAdmin} pathname={pathname} />
+          {/* <Separator />
+          <Nav isCollapsed={isCollapsed} link={conTenSideBarAdmin} pathname={pathname} /> */}
         </ResizablePanel>
         <ResizableHandle withHandle />
         {children}

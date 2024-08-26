@@ -24,14 +24,24 @@ export const CompanyBody = z
       .min(10, { message: 'Mô tả công ty tối thiểu 10 kí tự' })
       .max(10000, { message: 'Mô ta công ty tối đa 10000 kí tự' }),
     company_website: z.string({ message: 'Website có dạng chuỗi' }).optional(),
-    company_address: z.array(
-      z.object({
-        value: z
-          .string({ message: 'Địa chỉ có dạng chuỗi' })
-          .min(5, { message: 'Địa chỉ công ty tối thiểu 5 kí tự' })
-          .max(1000, { message: 'Địa chỉ công ty tối đa 1000 kí tự' })
-      })
-    ),
+    company_address: z
+      .array(
+        z.object({
+          company_address_province: z
+            .string({ message: 'Tỉnh/Thành phố phải là dạng chuỗi' })
+            .nonempty({ message: 'Tỉnh/Thành phố không được để trống' }),
+          company_address_district: z
+            .string({ message: 'Quận/Huyện phải là dạng chuỗi' })
+            .nonempty({ message: 'Quận/Huyện không được để trống' }),
+          company_address_ward: z
+            .string({ message: 'Xã/Phường phải là dạng chuỗi' })
+            .nonempty({ message: 'Xã/Phường không được để trống' }),
+          company_address_specific: z
+            .string({ message: 'Địa chỉ cụ thể phải là dạng chuỗi' })
+            .nonempty({ message: 'Địa chỉ cụ thể không được để trống' })
+        })
+      )
+      .nonempty({ message: 'Phải có ít nhất một địa chỉ cụ thể' }),
     company_code_fiscal: z
       .string({ message: 'Mã số thuế có dạng số' })
       .min(6, { message: 'Mã số thuế có tối thiểu 6 số' })
@@ -79,8 +89,6 @@ export const LoginCompanyBody = z.object({
     .regex(/[0-9]/, 'Mật khẩu phải chứa ít nhất một chữ số')
     .regex(/[^a-zA-Z0-9]/, 'Mật khẩu phải chứa ít nhất một ký tự đặc biệt')
 })
-
-
 
 export type Task = z.infer<typeof taskSchema>
 export type AddCompanyBodyType = z.TypeOf<typeof CompanyBody>

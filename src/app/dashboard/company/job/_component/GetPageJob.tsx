@@ -12,8 +12,7 @@ import { useLoading } from '@/context/LoadingContext'
 
 const AllJobWithCompany = async ({ current, pageSize }: { current?: number; pageSize?: number }) => {
   const res: IBackendRes<any> = await getJobPagination(current as number, pageSize as number)
-  console.log(res)
-  if (res.statusCode === 200) {
+  if (res && res.statusCode === 200) {
     return {
       data: res.metaData.result,
       meta: res.metaData.meta

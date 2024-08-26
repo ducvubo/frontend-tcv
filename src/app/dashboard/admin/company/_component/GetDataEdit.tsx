@@ -3,8 +3,10 @@ import React, { useEffect, useState } from 'react'
 import { FormAddCompany } from '../_component/AddOrEditCompany'
 import { genSignEndPoint } from '@/app/utils'
 import { ICompanyList } from '../Company.interface'
+import { useRouter } from 'next/navigation'
 
 export default function GetDataEdit({ params }: { params: { slug: string } }) {
+  const router = useRouter()
   const [inforCompanyState, setInforCompanyState] = useState({})
   const [isLoaded, setIsLoaded] = useState(false)
 
@@ -33,6 +35,8 @@ export default function GetDataEdit({ params }: { params: { slug: string } }) {
       if (inforCompany) {
         setInforCompanyState(inforCompany)
         setIsLoaded(true)
+      } else {
+        router.push('/dashboard/admin/company')
       }
     }
 

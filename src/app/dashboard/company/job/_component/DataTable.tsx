@@ -19,7 +19,7 @@ import {
 import { Skeleton } from '@/components/ui/skeleton'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Input } from '@/components/ui/input'
 import Link from 'next/link'
 
@@ -34,7 +34,6 @@ export function DataTable<TData, TValue>({ columns, data, isLoading }: DataTable
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
-
   const table = useReactTable({
     data,
     columns,
@@ -50,8 +49,9 @@ export function DataTable<TData, TValue>({ columns, data, isLoading }: DataTable
       columnFilters,
       columnVisibility,
       rowSelection
-    }
+    },
   })
+
   return (
     <div className='h-full '>
       <div className='flex items-center py-2'>

@@ -157,9 +157,7 @@ export default function FormAddOrEditJobTest({ inforJob, id }: { inforJob: any; 
         job_specific_address: location.job_specific_address
       }
     })
-    console.log(transformedValues)
   }
-  console.log('getValues(`job_specific_location`) ok ok ok:::::', getValues(`job_specific_location`))
 
   return (
     <Form {...form}>

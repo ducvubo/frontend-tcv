@@ -19,24 +19,51 @@ import { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
-import { ICompanyList } from '../Company.interface'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { CaretSortIcon, CheckIcon } from '@radix-ui/react-icons'
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
+import { cn } from '@/lib/utils'
+import { useLoading } from '@/context/LoadingContext'
 const mdParser = new MarkdownIt()
+
 interface urlImage {
   image_url_cloud: string
   image_url_local: string
   image_url_custom: string
 }
+
+interface IAddress {
+  id: string
+  name: string
+  name_en: string
+  full_name: string
+  full_name_en: string
+  latitude: string
+  longitude: string
+}
+
+interface IAddressData {
+  error: number
+  error_text: string
+  data_name: string
+  data: IAddress[]
+}
 export function FormAddCompany({ inforCompany, id }: any) {
   const router = useRouter()
+  const { setLoading } = useLoading()
   const [file_avatar, setFile_avatar] = useState<File | null>(null)
   const inputRef_avatar = useRef<HTMLInputElement | null>(null)
   const [file_baner, setFile_baner] = useState<File | null>(null)
   const inputRef_baner = useRef<HTMLInputElement | null>(null)
   const previousFileAvatarRef = useRef<Blob | null>(null)
   const previousFileBannerRef = useRef<Blob | null>(null)
-  const [loading, setLoading] = useState(false)
   const [loading_upload_a, setLoading_upload_a] = useState(false)
   const [loading_upload_b, setLoading_upload_b] = useState(false)
+
+  const [provinces, setProvinces] = useState<IAddress[]>([])
+  const [districts, setDistricts] = useState<Record<number, IAddress[]>>({})
+  const [wards, setWards] = useState<Record<number, IAddress[]>>({})
+
   const [avatar, setAvatar] = useState<urlImage>({
     image_url_cloud: '',
     image_url_local: '',
@@ -61,40 +88,130 @@ export function FormAddCompany({ inforCompany, id }: any) {
       company_employee_total: '',
       company_code_fiscal: '',
       company_business_field: '',
-      company_address: [{ value: '' }],
+      company_address: [
+        {
+          company_address_province: '',
+          company_address_district: '',
+          company_address_ward: '',
+          company_address_specific: ''
+        }
+      ],
       company_recruitment_status: ''
     }
   })
 
-  const { reset, watch, control } = form
+  const { reset, watch, control, setValue } = form
 
-  useEffect(() => {
-    if (inforCompany) {
-      setAvatar(inforCompany.company_avatar)
-      setBanner(inforCompany.company_banner)
-      reset({
-        company_email: inforCompany.company_email || '',
-        company_phone: inforCompany.company_phone || '',
-        company_password: inforCompany?.company_password ? 'nopassword' : '',
-        company_name: inforCompany.company_name || '',
-        company_avatar: inforCompany.company_avatar?.image_url_cloud || '',
-        company_banner: inforCompany.company_banner?.image_url_cloud || '',
-        company_description: inforCompany.company_description?.text || '',
-        company_website: inforCompany.company_website || '',
-        company_employee_total: inforCompany.company_employee_total || '',
-        company_code_fiscal: inforCompany?.company_code_fiscal || '',
-        company_business_field: inforCompany.company_business_field || '',
-        company_address: inforCompany?.company_address?.map((item: any) => ({ value: item })) || [{ value: '' }],
-        company_recruitment_status: inforCompany?.company_recruitment_status || ''
-      })
-    }
-  }, [inforCompany, reset])
   const { fields, append, remove } = useFieldArray({
-    control: form.control,
+    control,
     name: 'company_address'
   })
+
+  useEffect(() => {
+    const setUpdate = async () => {
+      if (inforCompany) {
+        setAvatar(inforCompany.company_avatar)
+        setBanner(inforCompany.company_banner)
+        reset({
+          company_email: inforCompany.company_email || '',
+          company_phone: inforCompany.company_phone || '',
+          company_password: 'nopasswordaaaaaaaaa',
+          company_name: inforCompany.company_name || '',
+          company_avatar: inforCompany.company_avatar?.image_url_cloud || '',
+          company_banner: inforCompany.company_banner?.image_url_cloud || '',
+          company_description: inforCompany.company_description?.text || '',
+          company_website: inforCompany.company_website || '',
+          company_employee_total: inforCompany.company_employee_total || '',
+          company_code_fiscal: inforCompany?.company_code_fiscal || '',
+          company_business_field: inforCompany.company_business_field || '',
+          company_recruitment_status: inforCompany?.company_recruitment_status || ''
+        })
+
+        if (Array.isArray(inforCompany.company_address)) {
+          for (let i = 0; i < inforCompany.company_address.length; i++) {
+            const item = inforCompany.company_address[i]
+
+            // Kích hoạt các sự kiện theo thứ tự
+            await handleProvinceChange(i, item.company_address_province.id)
+            await handleDistrictChange(i, item.company_address_district.id)
+            await handleWardChange(i, item.company_address_ward.id)
+
+            setValue(`company_address.${i}.company_address_specific`, item.company_address_specific)
+
+            if (i < inforCompany.company_address.length - 1) {
+              append({
+                company_address_province: '',
+                company_address_district: '',
+                company_address_ward: '',
+                company_address_specific: ''
+              })
+            }
+          }
+          const activeElement = document.activeElement as HTMLElement | null
+          if (activeElement && typeof activeElement.blur === 'function') {
+            activeElement.blur()
+          }
+          window.scrollTo({ top: 0, behavior: 'smooth' })
+        }
+      }
+    }
+
+    if (id !== 'add') {
+      setUpdate()
+    }
+  }, [inforCompany, reset])
+
   let image_avatar = form.watch('company_avatar')
   let image_baner = form.watch('company_banner')
+
+  useEffect(() => {
+    const fetchProvinces = async () => {
+      const response = await fetch('https://esgoo.net/api-tinhthanh/1/0.htm')
+      const data: IAddressData = await response.json()
+      setProvinces(data.data)
+    }
+    fetchProvinces()
+  }, [])
+  const fetchDistricts = async (provinceId: string, index: number) => {
+    const response = await fetch(`https://esgoo.net/api-tinhthanh/2/${provinceId}.htm`)
+    const data: IAddressData = await response.json()
+    setDistricts((prev) => ({
+      ...prev,
+      [parseInt(provinceId)]: data.data // Chỉ số là ID của tỉnh
+    }))
+    setValue(`company_address.${index}.company_address_district`, '') // Reset district khi tỉnh thay đổi
+    setValue(`company_address.${index}.company_address_ward`, '') // Reset ward khi tỉnh thay đổi
+  }
+
+  const fetchWards = async (districtId: string, index: number) => {
+    const response = await fetch(`https://esgoo.net/api-tinhthanh/3/${districtId}.htm`)
+    const data: IAddressData = await response.json()
+    setWards((prev) => ({
+      ...prev,
+      [parseInt(districtId)]: data.data // Chỉ số là ID của quận
+    }))
+    setValue(`company_address.${index}.company_address_ward`, '') // Reset ward khi quận thay đổi
+  }
+
+  const handleProvinceChange = async (index: number, value: string) => {
+    if (value) {
+      setValue(`company_address.${index}.company_address_province`, value)
+      await fetchDistricts(value, index)
+    }
+  }
+
+  const handleDistrictChange = async (index: number, value: string) => {
+    if (value) {
+      setValue(`company_address.${index}.company_address_district`, value)
+      await fetchWards(value, index)
+    }
+  }
+
+  const handleWardChange = (index: number, value: string) => {
+    if (value) {
+      setValue(`company_address.${index}.company_address_ward`, value)
+    }
+  }
 
   const uploadImage = async (formData: FormData, type: string) => {
     type === 'avatar' ? setLoading_upload_a(true) : setLoading_upload_b(true)
@@ -211,6 +328,33 @@ export function FormAddCompany({ inforCompany, id }: any) {
   }, [file_avatar, file_baner])
 
   async function onSubmit(values: AddCompanyBodyType) {
+    const transformedValues = values.company_address.map((location) => {
+      // Tìm tỉnh dựa trên ID
+      const province = provinces.find((p) => p.id === location.company_address_province) || { id: '', full_name: '' }
+
+      // Tìm quận dựa trên ID và tỉnh tương ứng
+      const districtList = districts[parseInt(location.company_address_province)] || []
+      const district = districtList.find((d) => d.id === location.company_address_district) || { id: '', full_name: '' }
+
+      // Tìm xã dựa trên ID và quận tương ứng
+      const wardList = wards[parseInt(location.company_address_district)] || []
+      const ward = wardList.find((w) => w.id === location.company_address_ward) || { id: '', full_name: '' }
+      return {
+        company_address_province: {
+          id: province.id,
+          full_name: province.full_name
+        },
+        company_address_district: {
+          id: district.id,
+          full_name: district.full_name
+        },
+        company_address_ward: {
+          id: ward.id,
+          full_name: ward.full_name
+        },
+        company_address_specific: location.company_address_specific
+      }
+    })
     setLoading(true)
     if (!avatar.image_url_cloud || !avatar.image_url_cloud || !avatar.image_url_custom) {
       toast('Vui lòng chọn avatar')
@@ -231,12 +375,11 @@ export function FormAddCompany({ inforCompany, id }: any) {
         text: values.company_description,
         html: htmlDescription
       },
+      company_address: transformedValues,
       company_avatar: avatar,
       company_banner: banner
     }
     try {
-      const company_address_map = payload.company_address.map((item: any) => item.value)
-      payload.company_address = company_address_map
       const { sign, stime, version, nonce } = genSignEndPoint()
 
       if (id === 'add') {
@@ -253,7 +396,6 @@ export function FormAddCompany({ inforCompany, id }: any) {
             body: JSON.stringify(payload)
           })
         ).json()
-        console.log('res:::::::::', res)
         if (res.statusCode === 201) {
           setLoading(false)
           toast('Thêm công ty thành công', {
@@ -297,7 +439,7 @@ export function FormAddCompany({ inforCompany, id }: any) {
               onClick: () => null
             }
           })
-          router.push('/admin/company')
+          router.push('/dashboard/admin/company')
           router.refresh()
         }
         if (res.statusCode === 400) {
@@ -321,6 +463,14 @@ export function FormAddCompany({ inforCompany, id }: any) {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit, (error) => {
+            if (error.company_address) {
+              ;(error as any)?.company_address.map((item: any) => {
+                if (item.company_address_district) toast.error(item.company_address_district.message)
+                if (item.company_address_ward) toast.error(item.company_address_ward.message)
+                if (item.company_address_specific) toast.error(item.company_address_specific.message)
+              })
+              toast.error('Vui lòng kiểm tra lại thông tin')
+            }
             console.log(error) //check loi form khi submit
           })}
           className='space-y-2  flex-shrink-0 w-full  p-2'
@@ -579,28 +729,217 @@ export function FormAddCompany({ inforCompany, id }: any) {
               />
             </div>
           </div>
-          <div className=''>
-            {fields.map((item: any, index: any) => (
-              <div key={index} className='flex'>
-                <FormField
-                  control={form.control}
-                  name={`company_address.${index}.value`}
+          <div className='w-full'>
+            {fields.map((item, index) => (
+              <div key={index} className='flex gap-4 w-full'>
+                <Controller
+                  name={`company_address.${index}.company_address_province`}
+                  control={control}
                   render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Địa chỉ công ty {index + 1} </FormLabel>
+                    <FormItem className='flex flex-col mt-3 w-full'>
+                      <FormLabel>Tỉnh/Thành *</FormLabel>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant='outline'
+                              role='combobox'
+                              className={cn('w-full justify-between', !field.value && 'text-muted-foreground')}
+                            >
+                              {field.value
+                                ? provinces.find((province) => province.id === field.value)?.full_name
+                                : 'Chọn Tỉnh/Thành'}
+                              <CaretSortIcon className='ml-2 h-4 w-4 shrink-0 opacity-50' />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className='w-[200px] p-0'>
+                          <Command>
+                            <CommandInput placeholder='Tìm kiếm tỉnh/thành...' className='h-9' />
+                            <CommandList>
+                              <CommandEmpty>Không tìm thấy tỉnh/thành nào.</CommandEmpty>
+                              <CommandGroup>
+                                {provinces.map((province) => (
+                                  <CommandItem
+                                    value={province.full_name}
+                                    key={province.id}
+                                    onSelect={() => {
+                                      handleProvinceChange(index, province.id)
+                                    }}
+                                  >
+                                    {province.full_name}
+                                    <CheckIcon
+                                      className={cn(
+                                        'ml-auto h-4 w-4',
+                                        province.id === field.value ? 'opacity-100' : 'opacity-0'
+                                      )}
+                                    />
+                                  </CommandItem>
+                                ))}
+                              </CommandGroup>
+                            </CommandList>
+                          </Command>
+                        </PopoverContent>
+                      </Popover>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <Controller
+                  name={`company_address.${index}.company_address_district`}
+                  control={control}
+                  render={({ field }) => (
+                    <FormItem className='flex flex-col mt-3 w-full'>
+                      <FormLabel>Quận/Huyện *</FormLabel>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant='outline'
+                              role='combobox'
+                              className={cn('w-full justify-between', !field.value && 'text-muted-foreground')}
+                            >
+                              {field.value
+                                ? (
+                                    districts[
+                                      parseInt(form.getValues(`company_address.${index}.company_address_province`))
+                                    ] || []
+                                  ).find((district) => district.id === field.value)?.full_name
+                                : 'Chọn Tỉnh/Thành'}
+                              <CaretSortIcon className='ml-2 h-4 w-4 shrink-0 opacity-50' />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className='w-[200px] p-0'>
+                          <Command>
+                            <CommandInput placeholder='Tìm kiếm quận/huyện...' className='h-9' />
+                            <CommandList>
+                              <CommandEmpty>Không tìm thấy quận/huyện nào.</CommandEmpty>
+                              <CommandGroup>
+                                {(
+                                  districts[
+                                    parseInt(form.getValues(`company_address.${index}.company_address_province`))
+                                  ] || []
+                                ).map((district) => (
+                                  <CommandItem
+                                    value={district.full_name}
+                                    key={district.id}
+                                    onSelect={() => {
+                                      handleDistrictChange(index, district.id)
+                                    }}
+                                  >
+                                    {district.full_name}
+                                    <CheckIcon
+                                      className={cn(
+                                        'ml-auto h-4 w-4',
+                                        district.id === field.value ? 'opacity-100' : 'opacity-0'
+                                      )}
+                                    />
+                                  </CommandItem>
+                                ))}
+                              </CommandGroup>
+                            </CommandList>
+                          </Command>
+                        </PopoverContent>
+                      </Popover>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <Controller
+                  name={`company_address.${index}.company_address_ward`}
+                  control={control}
+                  render={({ field }) => (
+                    <FormItem className='flex flex-col mt-3 w-full'>
+                      <FormLabel>Xã/Phường *</FormLabel>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant='outline'
+                              role='combobox'
+                              className={cn('w-full justify-between', !field.value && 'text-muted-foreground')}
+                            >
+                              {field.value
+                                ? (
+                                    wards[
+                                      parseInt(form.getValues(`company_address.${index}.company_address_district`))
+                                    ] || []
+                                  ).find((ward) => ward.id === field.value)?.full_name
+                                : 'Chọn Tỉnh/Thành'}
+                              <CaretSortIcon className='ml-2 h-4 w-4 shrink-0 opacity-50' />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className='w-[200px] p-0'>
+                          <Command>
+                            <CommandInput placeholder='Tìm kiếm xã/phường...' className='h-9' />
+                            <CommandList>
+                              <CommandEmpty>Không tìm thấy xã/phường nào.</CommandEmpty>
+                              <CommandGroup>
+                                {(
+                                  wards[
+                                    parseInt(form.getValues(`company_address.${index}.company_address_district`))
+                                  ] || []
+                                ).map((ward) => (
+                                  <CommandItem
+                                    value={ward.full_name}
+                                    key={ward.id}
+                                    onSelect={() => {
+                                      handleWardChange(index, ward.id)
+                                    }}
+                                  >
+                                    {ward.full_name}
+                                    <CheckIcon
+                                      className={cn(
+                                        'ml-auto h-4 w-4',
+                                        ward.id === field.value ? 'opacity-100' : 'opacity-0'
+                                      )}
+                                    />
+                                  </CommandItem>
+                                ))}
+                              </CommandGroup>
+                            </CommandList>
+                          </Command>
+                        </PopoverContent>
+                      </Popover>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <Controller
+                  name={`company_address.${index}.company_address_specific`}
+                  control={control}
+                  render={({ field }) => (
+                    <FormItem className='w-full'>
+                      <FormLabel>Địa chỉ cụ thể *</FormLabel>
                       <FormControl>
-                        <Input placeholder='Địa chỉ công ty...' type='text' {...field} className='w-[870px]' />
+                        <Input {...field} placeholder='Địa chỉ cụ thể...' />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
+
                 {fields.length > 1 && (
                   <span onClick={() => remove(index)} className='mt-10 cursor-pointer ml-2'>
                     <MdDeleteForever />
                   </span>
                 )}
-                <span onClick={() => append({ value: '' })} className='mt-10 cursor-pointer ml-5'>
+                <span
+                  onClick={() => {
+                    append({
+                      company_address_province: '',
+                      company_address_district: '',
+                      company_address_ward: '',
+                      company_address_specific: ''
+                    })
+                  }}
+                  className='mt-10 cursor-pointer'
+                >
                   <IoMdAddCircle />
                 </span>
               </div>

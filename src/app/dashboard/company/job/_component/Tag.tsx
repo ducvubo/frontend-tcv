@@ -63,7 +63,6 @@ export default function Tag({
 
   const getTags = async (value: string) => {
     const res = await getTag(value, type)
-    console.log(res)
     if (res.statusCode === 200) {
       setTagArr(res.metaData)
     } else if (res.statusCode === 404) {
@@ -99,7 +98,6 @@ export default function Tag({
       setInputValue('')
     }
   }
-  console.log(data)
   return (
     <React.Fragment>
       <div

@@ -7,8 +7,6 @@ import { Input, InputBanner } from '@/components/ui/input'
 import { vi } from 'date-fns/locale'
 import { useEffect, useState } from 'react'
 import { JobBody, JobBodyType } from '@/app/schemaValidations/Job.schema'
-import { addDays, format } from 'date-fns'
-import { DateRange } from 'react-day-picker'
 import { CalendarIcon, CaretSortIcon, CheckIcon } from '@radix-ui/react-icons'
 import { Calendar } from '@/components/ui/calendar'
 import { cn } from '@/lib/utils'
@@ -21,8 +19,7 @@ import { Switch } from '@/components/ui/switch'
 import { Label } from '@/components/ui/label'
 import { MdDeleteForever } from 'react-icons/md'
 import { IoMdAddCircle } from 'react-icons/io'
-import InputArr from '@/components/inputArr'
-import { genSignEndPoint, getProvinceSummary } from '@/app/utils'
+import { getProvinceSummary } from '@/app/utils'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
 import {
@@ -37,10 +34,9 @@ import {
 import { addJob, updateJob } from '../api'
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import GlobalLoading from '@/components/GlobalLoading'
 import { useLoading } from '@/context/LoadingContext'
-import TagProfession from './Tag'
 import Tag from './Tag'
+import { format } from 'date-fns'
 
 const mdParser = new MarkdownIt()
 const markdownDefault = {
@@ -147,7 +143,6 @@ export default function FormAddOrEditJob({ inforJob, id }: { inforJob: any; id: 
     resolver: zodResolver(JobBody),
     defaultValues: {
       job_name: '',
-      // job_address_summary: '',
       job_exp: '',
       job_rank: '',
       job_quantity: 0,
@@ -231,6 +226,13 @@ export default function FormAddOrEditJob({ inforJob, id }: { inforJob: any; id: 
             })
           }
         }
+        // Bỏ focus khỏi ô input sau khi xử lý xong
+        const activeElement = document.activeElement as HTMLElement | null
+        if (activeElement && typeof activeElement.blur === 'function') {
+          activeElement.blur()
+        }
+        // Cuộn lên đầu trang
+        window.scrollTo({ top: 0, behavior: 'smooth' })
       }
     }
 
@@ -459,7 +461,6 @@ export default function FormAddOrEditJob({ inforJob, id }: { inforJob: any; id: 
     }
   }
 
-  console.log(job_career)
   return (
     <Form {...form}>
       <form
@@ -629,6 +630,7 @@ export default function FormAddOrEditJob({ inforJob, id }: { inforJob: any; id: 
               </FormItem>
             )}
           />
+
           <FormField
             control={form.control}
             name='job_quantity'
@@ -647,6 +649,7 @@ export default function FormAddOrEditJob({ inforJob, id }: { inforJob: any; id: 
               </FormItem>
             )}
           />
+
           <FormField
             control={form.control}
             name='job_working_type'
@@ -810,10 +813,9 @@ export default function FormAddOrEditJob({ inforJob, id }: { inforJob: any; id: 
                             <CommandGroup>
                               {provinces.map((province) => (
                                 <CommandItem
-                                  value={province.id}
+                                  value={province.full_name}
                                   key={province.id}
                                   onSelect={() => {
-                                    // form.setValue(`job_specific_location.${index}.job_location_province`, province.id)
                                     handleProvinceChange(index, province.id)
                                   }}
                                 >
@@ -873,7 +875,7 @@ export default function FormAddOrEditJob({ inforJob, id }: { inforJob: any; id: 
                                 ] || []
                               ).map((district) => (
                                 <CommandItem
-                                  value={district.id}
+                                  value={district.full_name}
                                   key={district.id}
                                   onSelect={() => {
                                     // form.setValue(`job_specific_location.${index}.job_location_province`, province.id)
@@ -936,10 +938,9 @@ export default function FormAddOrEditJob({ inforJob, id }: { inforJob: any; id: 
                                 ] || []
                               ).map((ward) => (
                                 <CommandItem
-                                  value={ward.id}
+                                  value={ward.full_name}
                                   key={ward.id}
                                   onSelect={() => {
-                                    // form.setValue(`job_specific_location.${index}.job_location_province`, province.id)
                                     handleWardChange(index, ward.id)
                                   }}
                                 >

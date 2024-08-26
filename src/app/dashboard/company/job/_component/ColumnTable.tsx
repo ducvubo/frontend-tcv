@@ -12,24 +12,37 @@ export const columns: ColumnDef<IJob>[] = [
     accessorKey: 'job_name',
     header: 'Company Name'
   },
-  // {
-  //   accessorKey: 'job_wage',
-  //   header: ({ column }) => {
-  //     return <DataTableColumnHeader column={column} title='Lương' />
-  //   },
-  //   cell: ({ row }) => <div className='overflow-hidden text-ellipsis whitespace-nowrap'>{row.getValue('job_wage')}</div>
-  // },
+  {
+    accessorKey: 'job_wage',
+    header: 'Lương'
+  },
   {
     accessorKey: 'job_quantity',
     header: 'Số lượng'
+  },
+  {
+    accessorKey: 'job_exp',
+    header: 'Kinh nghiệm'
+  },
+  {
+    accessorKey: 'job_rank',
+    header: 'Chức vụ'
+  },
+  {
+    accessorKey: 'job_quantity',
+    header: 'Số lượng tuyển'
+  },
+  {
+    accessorKey: 'job_working_type',
+    header: 'Hình thức làm việc'
   },
   {
     accessorKey: 'job_isPublished',
     header: 'Publics'
   },
   {
-    accessorKey: 'job_isPublished',
-    header: 'Publish'
+    accessorKey: 'job_isDraft',
+    header: 'Drafts'
   },
 
   // {
